@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GlucoGuide AI — Diabetic Health Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0f0d;
+  --bg2: #111810;
+  --bg3: #162018;
+  --surface: #1a2419;
+  --surface2: #1f2b1e;
+  --border: rgba(74,200,120,0.12);
+  --border2: rgba(74,200,120,0.22);
+  --green: #4ac878;
+  --green2: #2d9e58;
+  --green3: #1a5c34;
+  --green-glow: rgba(74,200,120,0.15);
+  --amber: #f0a832;
+  --amber2: rgba(240,168,50,0.15);
+  --red: #e85555;
+  --red2: rgba(232,85,85,0.15);
+  --blue: #4a9ef0;
+  --blue2: rgba(74,158,240,0.15);
+  --text: #e8f0e8;
+  --text2: #8fa88f;
+  --text3: #5a6e5a;
+  --white: #ffffff;
+  --ff-head: 'Clash Display', sans-serif;
+  --ff-body: 'Cabinet Grotesk', sans-serif;
+  --ff-serif: 'Instrument Serif', serif;
+  --r: 14px; --r-sm: 8px; --r-lg: 20px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--ff-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--green3); border-radius: 3px; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 200; padding: 0;
+  transition: transform 0.3s;
+}
+.sidebar-brand {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-mark {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+}
+.brand-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--green), var(--green2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(74,200,120,0.3);
+}
+.brand-name { font-family: var(--ff-head); font-size: 1.1rem; font-weight: 600; color: var(--white); letter-spacing: -0.02em; }
+.brand-tag { font-size: 0.72rem; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.sidebar-nav { flex: 1; padding: 16px 10px; overflow-y: auto; }
+.nav-section-label { font-size: 0.65rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 10px 6px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: var(--r-sm);
+  cursor: pointer; transition: all 0.18s;
+  font-size: 0.88rem; color: var(--text2);
+  margin-bottom: 2px; border: 1px solid transparent;
+  position: relative;
+}
+.nav-item:hover { background: var(--surface); color: var(--text); }
+.nav-item.active {
+  background: var(--green-glow);
+  border-color: var(--border2);
+  color: var(--green);
+  font-weight: 500;
+}
+.nav-item .ni-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--green); color: var(--bg);
+  font-size: 0.65rem; font-weight: 700; padding: 2px 6px;
+  border-radius: 50px; min-width: 18px; text-align: center;
+}
+.nav-badge.amber { background: var(--amber); }
+
+.sidebar-footer {
+  padding: 12px 10px; border-top: 1px solid var(--border);
+}
+.user-chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px; border-radius: var(--r-sm);
+  background: var(--surface);
+  cursor: pointer;
+}
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #2d9e58, #4ac878);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.82rem; color: var(--bg); flex-shrink: 0;
+}
+.user-name { font-size: 0.82rem; font-weight: 500; color: var(--text); }
+.user-type { font-size: 0.7rem; color: var(--text3); }
+
+/* ── MAIN ── */
+.main { margin-left: 220px; min-height: 100vh; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,15,13,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-title { font-family: var(--ff-head); font-size: 1.1rem; font-weight: 600; color: var(--white); }
+.topbar-subtitle { font-size: 0.8rem; color: var(--text3); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 50px;
+  border: 1px solid var(--border2);
+  font-size: 0.78rem; color: var(--green);
+  background: var(--green-glow);
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+/* ── PAGES ── */
+.page { display: none; padding: 28px; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── GRID LAYOUTS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.grid-12 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-glow {
+  box-shadow: 0 0 40px rgba(74,200,120,0.06);
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: var(--ff-head); font-size: 0.95rem; font-weight: 600;
+  color: var(--text); display: flex; align-items: center; gap: 8px;
+}
+.card-title .ct-icon { font-size: 14px; }
+.card-action {
+  font-size: 0.75rem; color: var(--green); cursor: pointer;
+  border: 1px solid var(--border2); padding: 4px 10px; border-radius: 50px;
+  background: var(--green-glow); transition: all 0.2s;
+}
+.card-action:hover { background: rgba(74,200,120,0.25); }
+
+/* ── METRIC CARDS ── */
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  position: relative; overflow: hidden;
+}
+.metric-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent-color, var(--green));
+}
+.metric-label { font-size: 0.72rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.metric-value { font-family: var(--ff-head); font-size: 2rem; font-weight: 700; color: var(--white); line-height: 1; }
+.metric-unit { font-size: 0.8rem; color: var(--text3); margin-left: 3px; }
+.metric-trend { font-size: 0.75rem; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.trend-up { color: var(--red); }
+.trend-down { color: var(--green); }
+.trend-ok { color: var(--green); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px; border-radius: 50px;
+  border: none; cursor: pointer;
+  font-family: var(--ff-body); font-size: 0.9rem; font-weight: 500;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--green); color: var(--bg);
+  font-weight: 700;
+}
+.btn-primary:hover { background: #5dd88b; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(74,200,120,0.3); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-ghost:hover { background: var(--surface); color: var(--text); }
+.btn-amber {
+  background: var(--amber2); color: var(--amber);
+  border: 1px solid rgba(240,168,50,0.25);
+}
+.btn-sm { padding: 7px 16px; font-size: 0.82rem; }
+
+/* ── FORMS ── */
+.form-row { display: grid; gap: 14px; }
+.form-row-2 { grid-template-columns: 1fr 1fr; }
+.form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.78rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+input, select, textarea {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 10px 14px;
+  color: var(--text); font-family: var(--ff-body); font-size: 0.9rem;
+  outline: none; transition: border 0.2s;
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(74,200,120,0.1); }
+select option { background: var(--bg2); }
+textarea { resize: vertical; min-height: 80px; }
+input::placeholder { color: var(--text3); }
+
+/* ── AI RESULT ── */
+.ai-output {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 18px;
+  font-size: 0.88rem; line-height: 1.8; color: var(--text2);
+  white-space: pre-wrap; margin-top: 14px;
+  max-height: 500px; overflow-y: auto;
+}
+.ai-loading {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px; color: var(--text3); font-size: 0.88rem;
+}
+.loader {
+  width: 18px; height: 18px; border: 2px solid var(--border);
+  border-top-color: var(--green); border-radius: 50%;
+  animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── GLUCOSE CHART ── */
+.chart-container { position: relative; height: 180px; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 50px;
+  font-size: 0.72rem; font-weight: 600;
+}
+.badge-green { background: rgba(74,200,120,0.15); color: var(--green); border: 1px solid rgba(74,200,120,0.25); }
+.badge-amber { background: var(--amber2); color: var(--amber); border: 1px solid rgba(240,168,50,0.25); }
+.badge-red { background: var(--red2); color: var(--red); border: 1px solid rgba(232,85,85,0.25); }
+.badge-blue { background: var(--blue2); color: var(--blue); border: 1px solid rgba(74,158,240,0.25); }
+
+/* ── TABS ── */
+.tab-bar {
+  display: flex; gap: 4px; margin-bottom: 20px;
+  background: var(--surface); padding: 4px; border-radius: var(--r-sm);
+  width: fit-content;
+}
+.tab-btn {
+  padding: 7px 18px; border-radius: 6px; border: none;
+  background: transparent; color: var(--text3);
+  font-family: var(--ff-body); font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-btn.active { background: var(--green); color: var(--bg); font-weight: 600; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── GLUCOSE ENTRIES ── */
+.g-entry {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 14px; border-radius: var(--r-sm);
+  background: var(--bg3); border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.g-value {
+  font-family: var(--ff-head); font-size: 1.3rem; font-weight: 700;
+  min-width: 58px;
+}
+.g-meta { flex: 1; }
+.g-type { font-size: 0.82rem; color: var(--text); font-weight: 500; }
+.g-time { font-size: 0.72rem; color: var(--text3); }
+
+/* ── MEAL ROWS ── */
+.meal-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.meal-row:last-child { border-bottom: none; }
+.meal-time-label {
+  font-size: 0.72rem; color: var(--green); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  min-width: 80px;
+}
+.meal-name { font-size: 0.88rem; color: var(--text); flex: 1; }
+.meal-carbs { font-size: 0.78rem; color: var(--text3); min-width: 60px; text-align: right; }
+
+/* ── PROGRESS ── */
+.prog-bar-bg { background: var(--bg3); border-radius: 50px; height: 6px; overflow: hidden; }
+.prog-bar-fill { height: 100%; border-radius: 50px; transition: width 1s ease; }
+
+/* ── EXERCISE CARDS ── */
+.ex-day-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 14px;
+  transition: border-color 0.2s;
+}
+.ex-day-card:hover { border-color: var(--green); }
+.ex-day { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.ex-name { font-size: 0.92rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.ex-detail { font-size: 0.78rem; color: var(--text3); line-height: 1.5; }
+.ex-intensity { display: inline-block; padding: 3px 9px; border-radius: 50px; font-size: 0.7rem; font-weight: 600; margin-top: 8px; }
+.int-low { background: rgba(74,200,120,0.1); color: var(--green); }
+.int-mod { background: rgba(74,158,240,0.1); color: var(--blue); }
+.int-high { background: rgba(240,168,50,0.1); color: var(--amber); }
+
+/* ── CHAT ── */
+.chat-window {
+  height: 400px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: var(--r-sm);
+  margin-bottom: 12px;
+}
+.chat-bubble {
+  max-width: 82%; padding: 12px 16px; border-radius: 16px;
+  font-size: 0.88rem; line-height: 1.6;
+}
+.bubble-ai {
+  align-self: flex-start;
+  background: var(--surface2); color: var(--text2);
+  border: 1px solid var(--border); border-bottom-left-radius: 4px;
+}
+.bubble-user {
+  align-self: flex-end;
+  background: var(--green); color: var(--bg);
+  font-weight: 500; border-bottom-right-radius: 4px;
+}
+.chat-input-row { display: flex; gap: 10px; }
+.chat-inp { flex: 1; border-radius: 50px; padding: 11px 18px; }
+
+/* ── NOVEL FEATURES ── */
+
+/* Risk Score Ring */
+.risk-ring-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; }
+.risk-ring { position: relative; width: 140px; height: 140px; }
+.risk-ring svg { transform: rotate(-90deg); }
+.risk-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.risk-score { font-family: var(--ff-head); font-size: 2rem; font-weight: 700; }
+.risk-text { font-size: 0.72rem; color: var(--text3); }
+
+/* Circadian rhythm */
+.circadian-row { display: flex; gap: 4px; align-items: flex-end; height: 60px; margin: 12px 0; }
+.circadian-bar { flex: 1; border-radius: 4px 4px 0 0; transition: all 0.4s; cursor: pointer; position: relative; }
+.circadian-bar:hover::after {
+  content: attr(data-tip);
+  position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+  background: var(--bg); border: 1px solid var(--border2);
+  padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;
+  white-space: nowrap; color: var(--text); z-index: 10;
+}
+.circadian-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text3); }
+
+/* Mood tracker */
+.mood-emoji-row { display: flex; gap: 8px; }
+.mood-btn {
+  flex: 1; padding: 10px; border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--bg3); cursor: pointer; text-align: center; transition: all 0.2s;
+  font-size: 1.4rem;
+}
+.mood-btn:hover, .mood-btn.selected { border-color: var(--green); background: var(--green-glow); }
+
+/* Meal photo scan */
+.scan-drop {
+  border: 2px dashed var(--border2); border-radius: var(--r);
+  padding: 30px; text-align: center; cursor: pointer;
+  transition: all 0.2s; position: relative; overflow: hidden;
+}
+.scan-drop:hover { border-color: var(--green); background: var(--green-glow); }
+.scan-icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+/* Water tracker */
+.water-glasses { display: flex; gap: 6px; flex-wrap: wrap; }
+.water-glass {
+  width: 36px; height: 44px; border-radius: 0 0 6px 6px;
+  border: 2px solid var(--border2);
+  cursor: pointer; transition: all 0.25s; position: relative;
+  overflow: hidden; background: var(--bg3);
+}
+.water-glass.filled::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, #4a9ef0, rgba(74,158,240,0.4));
+  height: 100%; border-radius: 0 0 4px 4px;
+  animation: fillUp 0.4s ease;
+}
+@keyframes fillUp { from { height:0; } to { height:100%; } }
+.water-glass:hover { border-color: var(--blue); }
+
+/* Complication risk */
+.risk-matrix { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 8px; }
+.risk-cell { padding: 10px; border-radius: var(--r-sm); text-align: center; border: 1px solid; }
+.risk-cell-label { font-size: 0.7rem; margin-bottom: 4px; }
+.risk-cell-val { font-family: var(--ff-head); font-size: 1.1rem; font-weight: 700; }
+
+/* Glucose heatmap */
+.heatmap-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-top: 10px; }
+.hm-cell {
+  aspect-ratio: 1; border-radius: 3px; cursor: pointer;
+  transition: transform 0.15s;
+}
+.hm-cell:hover { transform: scale(1.2); }
+
+/* Community */
+.community-post {
+  padding: 14px; border: 1px solid var(--border); border-radius: var(--r-sm);
+  background: var(--bg3); margin-bottom: 10px;
+}
+.cp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.cp-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+.cp-name { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+.cp-time { font-size: 0.72rem; color: var(--text3); }
+.cp-text { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+/* Achievement */
+.achievement {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--r-sm);
+  background: var(--bg3); border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.ach-icon { font-size: 1.6rem; }
+.ach-name { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+.ach-desc { font-size: 0.75rem; color: var(--text3); }
+.ach-locked { opacity: 0.4; filter: grayscale(1); }
+
+/* Hero section */
+.hero-section {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg3) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 28px;
+  position: relative; overflow: hidden; margin-bottom: 22px;
+}
+.hero-section::before {
+  content: '';
+  position: absolute; right: -40px; top: -40px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(74,200,120,0.08) 0%, transparent 70%);
+}
+.hero-greeting { font-family: var(--ff-serif); font-style: italic; font-size: 1rem; color: var(--text3); margin-bottom: 4px; }
+.hero-name { font-family: var(--ff-head); font-size: 2rem; font-weight: 700; color: var(--white); margin-bottom: 8px; letter-spacing: -0.03em; }
+.hero-status { font-size: 0.88rem; color: var(--text2); max-width: 480px; line-height: 1.6; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* Section header */
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.sec-title { font-family: var(--ff-head); font-size: 1.05rem; font-weight: 600; color: var(--white); }
+
+/* Quick action pills */
+.quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.qa-pill {
+  padding: 7px 14px; border-radius: 50px; font-size: 0.8rem;
+  border: 1px solid var(--border2); color: var(--text2);
+  background: var(--surface); cursor: pointer; transition: all 0.2s;
+}
+.qa-pill:hover { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+
+/* Vitals sparkline placeholder */
+.sparkline { display: flex; align-items: flex-end; gap: 3px; height: 36px; }
+.sp-bar { flex: 1; border-radius: 2px; background: var(--green3); transition: background 0.2s; }
+.sp-bar.high { background: rgba(232,85,85,0.5); }
+.sp-bar.ok { background: rgba(74,200,120,0.5); }
+.sp-bar.low { background: rgba(240,168,50,0.5); }
+
+/* Insight card */
+.insight-card {
+  border-radius: var(--r); padding: 16px;
+  margin-bottom: 10px; border-left: 3px solid;
+}
+.insight-info { background: rgba(74,158,240,0.08); border-color: var(--blue); }
+.insight-warn { background: rgba(240,168,50,0.08); border-color: var(--amber); }
+.insight-good { background: rgba(74,200,120,0.08); border-color: var(--green); }
+.insight-title { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.insight-body { font-size: 0.8rem; color: var(--text3); line-height: 1.6; }
+
+/* Tooltip-style tag */
+.feature-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.68rem; padding: 2px 8px; border-radius: 50px;
+  background: rgba(74,200,120,0.1); color: var(--green);
+  border: 1px solid rgba(74,200,120,0.2); margin-left: 8px;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .main { margin-left: 0; }
+  .grid-2, .grid-3, .grid-4, .grid-12 { grid-template-columns: 1fr; }
+  .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+}
+
+/* ── ONBOARDING SPLASH ── */
+#splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 24px;
+  animation: splashFade 0.5s ease 2.4s forwards;
+}
+@keyframes splashFade { to { opacity:0; pointer-events:none; } }
+.splash-logo { font-family: var(--ff-head); font-size: 3rem; font-weight: 700; color: var(--white); letter-spacing: -0.04em; }
+.splash-logo span { color: var(--green); }
+.splash-sub { font-size: 0.9rem; color: var(--text3); }
+.splash-bar-bg { width: 200px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+.splash-bar { height: 100%; background: var(--green); animation: loadBar 2.2s ease forwards; }
+@keyframes loadBar { from { width:0; } to { width:100%; } }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">Gluco<span>Guide</span></div>
+  <div class="splash-sub">AI-Powered Diabetic Health Platform</div>
+  <div class="splash-bar-bg"><div class="splash-bar"></div></div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">
+      <div class="brand-icon">🩺</div>
+      <div>
+        <div class="brand-name">GlucoGuide</div>
+        <div class="brand-tag">AI Health Platform</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="nav('dashboard',this)">
+      <span class="ni-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="nav('profile',this)">
+      <span class="ni-icon">👤</span> My Profile
+    </div>
+
+    <div class="nav-section-label">AI Plans</div>
+    <div class="nav-item" onclick="nav('diet',this)">
+      <span class="ni-icon">🍽️</span> Diet Planner
+    </div>
+    <div class="nav-item" onclick="nav('exercise',this)">
+      <span class="ni-icon">🏃</span> Exercise Plan
+    </div>
+
+    <div class="nav-section-label">Monitoring</div>
+    <div class="nav-item" onclick="nav('glucose',this)">
+      <span class="ni-icon">🩸</span> Glucose Log
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="nav('vitals',this)">
+      <span class="ni-icon">💓</span> Vitals Tracker
+    </div>
+    <div class="nav-item" onclick="nav('risk',this)">
+      <span class="ni-icon">⚠️</span> Risk Analyzer
+    </div>
+
+    <div class="nav-section-label">Novel Features</div>
+    <div class="nav-item" onclick="nav('meal-scan',this)">
+      <span class="ni-icon">📷</span> Meal Scan AI
+      <span class="feature-tag">NEW</span>
+    </div>
+    <div class="nav-item" onclick="nav('circadian',this)">
+      <span class="ni-icon">🌙</span> Circadian Plan
+      <span class="feature-tag">NEW</span>
+    </div>
+    <div class="nav-item" onclick="nav('mood',this)">
+      <span class="ni-icon">🧠</span> Mind & Mood
+      <span class="feature-tag">NEW</span>
+    </div>
+    <div class="nav-item" onclick="nav('community',this)">
+      <span class="ni-icon">👥</span> Community
+    </div>
+
+    <div class="nav-section-label">AI Tools</div>
+    <div class="nav-item" onclick="nav('chat',this)">
+      <span class="ni-icon">🤖</span> AI Health Coach
+      <span class="nav-badge amber">!</span>
+    </div>
+    <div class="nav-item" onclick="nav('achievements',this)">
+      <span class="ni-icon">🏆</span> Achievements
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">AK</div>
+      <div>
+        <div class="user-name">Alex Kumar</div>
+        <div class="user-type">Type 2 · HbA1c 6.8%</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title" id="tb-title">Dashboard</div>
+        <div class="topbar-subtitle" id="tb-sub">Tuesday, 31 March 2026</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        AI Active
+      </div>
+      <span style="font-size:0.8rem;color:var(--text3);">Problem Statement #9</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: DASHBOARD
+  ════════════════════════════════════════ -->
+  <div id="page-dashboard" class="page active">
+    <div class="hero-section">
+      <div class="hero-greeting">Good morning,</div>
+      <div class="hero-name">Alex Kumar 👋</div>
+      <div class="hero-status">Your fasting glucose is within range today. Your AI coach has updated your meal plan based on last night's reading of <strong style="color:var(--green)">112 mg/dL</strong>. Keep it up!</div>
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button class="btn btn-primary btn-sm" onclick="nav('diet',document.querySelector('[onclick*=diet]'))">View Today's Meal Plan</button>
+        <button class="btn btn-ghost btn-sm" onclick="nav('chat',document.querySelector('[onclick*=chat]'))">Chat with AI Coach</button>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="metric-card" style="--accent-color:var(--green)">
+        <div class="metric-label">Fasting Glucose</div>
+        <div><span class="metric-value" style="color:var(--green)">112</span><span class="metric-unit">mg/dL</span></div>
+        <div class="metric-trend trend-down">▼ 6 from yesterday</div>
+      </div>
+      <div class="metric-card" style="--accent-color:var(--amber)">
+        <div class="metric-label">Post-meal (2hr)</div>
+        <div><span class="metric-value" style="color:var(--amber)">168</span><span class="metric-unit">mg/dL</span></div>
+        <div class="metric-trend trend-up">▲ Slightly elevated</div>
+      </div>
+      <div class="metric-card" style="--accent-color:var(--green)">
+        <div class="metric-label">HbA1c (est.)</div>
+        <div><span class="metric-value" style="color:var(--green)">6.8</span><span class="metric-unit">%</span></div>
+        <div class="metric-trend trend-ok">Target: &lt;7.0%  ✓</div>
+      </div>
+      <div class="metric-card" style="--accent-color:var(--blue)">
+        <div class="metric-label">Steps Today</div>
+        <div><span class="metric-value" style="color:var(--blue)">6,240</span></div>
+        <div class="metric-trend" style="color:var(--text3)">Goal: 8,000 steps</div>
+      </div>
+    </div>
+
+    <div class="grid-12">
+      <div>
+        <div class="card card-glow">
+          <div class="card-header">
+            <div class="card-title"><span class="ct-icon">📈</span> 7-Day Glucose Trend</div>
+            <span class="badge badge-green">In Control</span>
+          </div>
+          <div class="chart-container"><canvas id="trendChart"></canvas></div>
+        </div>
+        <div style="height:16px"></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="ct-icon">🎯</span> Weekly Goals</div>
+            <span class="card-action" onclick="nav('achievements',document.querySelector('[onclick*=achievements]'))">View All</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:var(--text2)">Exercise Days</span><span style="color:var(--green)">4/5</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:80%;background:var(--green)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:var(--text2)">Carb Targets Met</span><span style="color:var(--amber)">5/7</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:71%;background:var(--amber)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:var(--text2)">Water Intake (2L)</span><span style="color:var(--red)">3/7 days</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:43%;background:var(--red)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:var(--text2)">Glucose Logs</span><span style="color:var(--green)">12/14</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:86%;background:var(--green)"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="ct-icon">⚠️</span> AI Alerts</div>
+          </div>
+          <div class="insight-card insight-warn">
+            <div class="insight-title">💊 Medication Reminder</div>
+            <div class="insight-body">Metformin 500mg due in 45 minutes (9:00 AM). Take with food.</div>
+          </div>
+          <div class="insight-card insight-info">
+            <div class="insight-title">🏃 Scheduled Exercise</div>
+            <div class="insight-body">30-min brisk walk at 6:00 PM. Glucose expected to drop ~18 mg/dL.</div>
+          </div>
+          <div class="insight-card insight-good">
+            <div class="insight-title">✅ Great Streak!</div>
+            <div class="insight-body">5 consecutive days of glucose within target range. Keep it up!</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">🍱</span> Today's Meals</div>
+          <div class="meal-row"><span class="meal-time-label">Breakfast</span><span class="meal-name">Oats + nuts + berries</span><span class="meal-carbs">42g carbs</span></div>
+          <div class="meal-row"><span class="meal-time-label">Snack</span><span class="meal-name">Apple + almond butter</span><span class="meal-carbs">22g carbs</span></div>
+          <div class="meal-row"><span class="meal-time-label">Lunch</span><span class="meal-name">Brown rice + dal + sabzi</span><span class="meal-carbs">60g carbs</span></div>
+          <div class="meal-row"><span class="meal-time-label">Evening</span><span class="meal-name">Roasted chickpeas</span><span class="meal-carbs">18g carbs</span></div>
+          <div class="meal-row"><span class="meal-time-label">Dinner</span><span class="meal-name">Ragi roti + palak paneer</span><span class="meal-carbs">45g carbs</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: PROFILE
+  ════════════════════════════════════════ -->
+  <div id="page-profile" class="page">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">👤</span> Personal Information</div>
+        <div class="form-row form-row-2" style="margin-bottom:12px;">
+          <div class="form-group"><label>Full Name</label><input id="p-name" value="Alex Kumar"/></div>
+          <div class="form-group"><label>Age</label><input id="p-age" type="number" value="48"/></div>
+          <div class="form-group"><label>Gender</label><select id="p-gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+          <div class="form-group"><label>Weight (kg)</label><input id="p-weight" type="number" value="78"/></div>
+          <div class="form-group"><label>Height (cm)</label><input id="p-height" type="number" value="170"/></div>
+          <div class="form-group"><label>BMI</label><input id="p-bmi" value="27.0" readonly style="opacity:0.6"/></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">🩺</span> Medical Details</div>
+        <div class="form-row form-row-2" style="margin-bottom:12px;">
+          <div class="form-group"><label>Diabetes Type</label><select id="p-type"><option selected>Type 2</option><option>Type 1</option><option>Pre-diabetes</option><option>Gestational</option></select></div>
+          <div class="form-group"><label>Diagnosis Year</label><input id="p-year" value="2018"/></div>
+          <div class="form-group"><label>HbA1c (%)</label><input id="p-hba1c" type="number" step="0.1" value="6.8"/></div>
+          <div class="form-group"><label>Fasting Glucose (mg/dL)</label><input id="p-fasting" type="number" value="112"/></div>
+          <div class="form-group" style="grid-column:1/-1"><label>Medications</label><input id="p-meds" value="Metformin 500mg twice daily"/></div>
+          <div class="form-group" style="grid-column:1/-1"><label>Conditions / Allergies</label><textarea id="p-cond">Mild hypertension. Lactose sensitive. No food allergies.</textarea></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">🏃</span> Lifestyle</div>
+        <div class="form-row form-row-2">
+          <div class="form-group"><label>Activity Level</label><select id="p-activity"><option>Sedentary</option><option selected>Lightly Active</option><option>Moderately Active</option><option>Very Active</option></select></div>
+          <div class="form-group"><label>Exercise Days/Week</label><select id="p-exdays"><option>1-2</option><option selected>3-4</option><option>5-6</option><option>Daily</option></select></div>
+          <div class="form-group"><label>Sleep (hrs)</label><input id="p-sleep" type="number" value="7"/></div>
+          <div class="form-group"><label>Stress Level</label><select id="p-stress"><option>Low</option><option selected>Moderate</option><option>High</option></select></div>
+          <div class="form-group" style="grid-column:1/-1"><label>Health Goals</label><textarea id="p-goals">Reduce HbA1c below 6.5%, lose 5kg in 3 months, improve energy.</textarea></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">🥗</span> Dietary Preferences</div>
+        <div class="form-row form-row-2">
+          <div class="form-group"><label>Diet Type</label><select id="p-diet"><option>Non-Vegetarian</option><option selected>Vegetarian</option><option>Vegan</option><option>Eggetarian</option></select></div>
+          <div class="form-group"><label>Cuisine</label><select id="p-cuisine"><option selected>South Indian</option><option>North Indian</option><option>Mixed Indian</option><option>Mediterranean</option></select></div>
+          <div class="form-group" style="grid-column:1/-1"><label>Dislikes / Restrictions</label><input id="p-dislikes" value="Bitter gourd, raw onion"/></div>
+          <div class="form-group" style="grid-column:1/-1"><label>Calorie Target</label><select id="p-cal"><option>1400-1600 kcal</option><option selected>1600-1800 kcal</option><option>1800-2000 kcal</option></select></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+      <span id="profile-saved" style="display:none;align-items:center;gap:6px;color:var(--green);font-size:0.85rem;">✅ Saved!</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: DIET PLANNER
+  ════════════════════════════════════════ -->
+  <div id="page-diet" class="page">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('diet','gen',this)">AI Generate</button>
+      <button class="tab-btn" onclick="switchTab('diet','weekly',this)">Weekly Plan</button>
+      <button class="tab-btn" onclick="switchTab('diet','nutrition',this)">Nutrition</button>
+    </div>
+
+    <div id="diet-gen" class="tab-content active">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">⚙️</span> Customize Plan</div>
+          <div class="form-row form-row-2" style="margin-bottom:14px;">
+            <div class="form-group"><label>Duration</label><select id="diet-dur"><option>Today (1 day)</option><option selected>This Week (7 days)</option><option>2 Weeks</option></select></div>
+            <div class="form-group"><label>Calorie Target</label><select id="diet-cal-sel"><option>1400-1600</option><option selected>1600-1800</option><option>1800-2000</option></select></div>
+            <div class="form-group"><label>Today's Glucose (mg/dL)</label><input id="diet-glu" type="number" value="112"/></div>
+            <div class="form-group"><label>Today's Activity</label><select id="diet-act"><option>Sedentary</option><option selected>Lightly Active</option><option>Active</option></select></div>
+            <div class="form-group" style="grid-column:1/-1"><label>Special Instructions</label><textarea id="diet-notes">Focus on low GI South Indian foods. Include protein-rich options for dinner.</textarea></div>
+          </div>
+          <button class="btn btn-primary" onclick="generateDiet()" id="diet-btn">🤖 Generate AI Diet Plan</button>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">💡</span> Your Dietary Rules</div>
+          <div class="insight-card insight-info"><div class="insight-title">Carb Target</div><div class="insight-body">45–60g per meal · prefer GI &lt;55 foods</div></div>
+          <div class="insight-card insight-good"><div class="insight-title">Meal Timing</div><div class="insight-body">Space meals 3–4 hours apart · avoid skipping</div></div>
+          <div class="insight-card insight-warn"><div class="insight-title">Watch Out</div><div class="insight-body">Limit white rice, maida, sugary drinks, and fried snacks</div></div>
+          <div style="margin-top:12px;font-size:0.78rem;color:var(--text3);">Based on Type 2 Diabetes · HbA1c 6.8% · South Indian Vegetarian</div>
+        </div>
+      </div>
+      <div id="diet-result-wrap" style="display:none;margin-top:16px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="ct-icon">🤖</span> AI-Generated Diet Plan</div>
+            <span class="badge badge-green">Claude AI</span>
+          </div>
+          <div id="diet-output" class="ai-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="diet-weekly" class="tab-content">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">📅</span> Sample 7-Day Meal Plan</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+            <thead><tr>
+              <th style="text-align:left;padding:10px 12px;color:var(--text3);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Day</th>
+              <th style="text-align:left;padding:10px 12px;color:var(--text3);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Breakfast</th>
+              <th style="text-align:left;padding:10px 12px;color:var(--text3);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Lunch</th>
+              <th style="text-align:left;padding:10px 12px;color:var(--text3);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Dinner</th>
+              <th style="text-align:right;padding:10px 12px;color:var(--text3);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Carbs</th>
+            </tr></thead>
+            <tbody id="weekly-tbody">
+              <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--green);font-weight:600;">Monday</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Idli (2) + sambar + chutney</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Brown rice + dal + sabzi + curd</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Ragi roti + palak paneer</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text3);text-align:right;">~165g</td></tr>
+              <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--green);font-weight:600;">Tuesday</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Oats upma + boiled egg</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Millet rice + rajma + salad</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Veg soup + multigrain roti</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text3);text-align:right;">~155g</td></tr>
+              <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--green);font-weight:600;">Wednesday</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Moong dal chilla + chutney</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Curd rice + veg curry</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Mixed veg dal + 2 rotis</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text3);text-align:right;">~158g</td></tr>
+              <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--green);font-weight:600;">Thursday</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Poha with vegetables + nuts</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Quinoa pulao + raita + salad</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Tofu stir-fry + ½ cup brown rice</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text3);text-align:right;">~150g</td></tr>
+              <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--green);font-weight:600;">Friday</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Dosa (2) + sambar</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Jowar roti + dal + cucumber</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Grilled veg + egg curry + roti</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text3);text-align:right;">~162g</td></tr>
+              <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--green);font-weight:600;">Saturday</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Rava upma + coconut chutney</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Brown rice + chana masala</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);">Vegetable khichdi</td><td style="padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text3);text-align:right;">~158g</td></tr>
+              <tr><td style="padding:10px 12px;color:var(--green);font-weight:600;">Sunday</td><td style="padding:10px 12px;color:var(--text2);">Veg uttapam + sambar</td><td style="padding:10px 12px;color:var(--text2);">Multigrain roti + paneer bhurji</td><td style="padding:10px 12px;color:var(--text2);">Light soup + roti + sprouts</td><td style="padding:10px 12px;color:var(--text3);text-align:right;">~152g</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="diet-nutrition" class="tab-content">
+      <div class="grid-3">
+        <div class="metric-card" style="--accent-color:var(--amber)">
+          <div class="metric-label">Daily Carbs Avg</div>
+          <div><span class="metric-value" style="color:var(--amber)">157</span><span class="metric-unit">g</span></div>
+          <div class="metric-trend" style="color:var(--text3)">Target: 150–180g</div>
+        </div>
+        <div class="metric-card" style="--accent-color:var(--green)">
+          <div class="metric-label">Protein Avg</div>
+          <div><span class="metric-value" style="color:var(--green)">72</span><span class="metric-unit">g</span></div>
+          <div class="metric-trend" style="color:var(--text3)">Target: 65–80g ✓</div>
+        </div>
+        <div class="metric-card" style="--accent-color:var(--blue)">
+          <div class="metric-label">Calories Avg</div>
+          <div><span class="metric-value" style="color:var(--blue)">1720</span><span class="metric-unit">kcal</span></div>
+          <div class="metric-trend" style="color:var(--text3)">Target: 1600–1800 ✓</div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:16px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">✅</span> Best Foods for You</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--green)">▸</span> Ragi, jowar, bajra (millets) — GI 55–68</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--green)">▸</span> Legumes — dal, chana, rajma — high fiber</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--green)">▸</span> Leafy greens, broccoli, bitter gourd</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--green)">▸</span> Nuts: almonds, walnuts (small portion)</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--green)">▸</span> Low-fat curd, buttermilk (probiotic)</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--green)">▸</span> Berries, guava, papaya (low GI fruits)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">❌</span> Foods to Avoid</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--red)">▸</span> White rice (large portions), maida products</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--red)">▸</span> Sugary drinks — sodas, packaged juices</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--red)">▸</span> Fried snacks — samosa, puri, biscuits</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--red)">▸</span> Refined sweets, mithai, packaged snacks</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--red)">▸</span> Sweetened yogurt, flavored milk drinks</li>
+            <li style="font-size:0.85rem;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--red)">▸</span> Fruit juice (eat whole fruit instead)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: EXERCISE
+  ════════════════════════════════════════ -->
+  <div id="page-exercise" class="page">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('exercise','exgen',this)">AI Generate</button>
+      <button class="tab-btn" onclick="switchTab('exercise','explan',this)">Weekly Plan</button>
+      <button class="tab-btn" onclick="switchTab('exercise','exsafe',this)">Safety</button>
+    </div>
+
+    <div id="exercise-exgen" class="tab-content active">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">⚙️</span> Plan Parameters</div>
+          <div class="form-row form-row-2" style="margin-bottom:14px;">
+            <div class="form-group"><label>Fitness Level</label><select id="ex-fit"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
+            <div class="form-group"><label>Time Available/Day</label><select id="ex-time"><option>15–20 min</option><option selected>30–45 min</option><option>45–60 min</option></select></div>
+            <div class="form-group"><label>Today's Glucose (mg/dL)</label><input id="ex-glu" type="number" value="130"/></div>
+            <div class="form-group"><label>Equipment</label><select id="ex-eq"><option>No equipment</option><option selected>Basic (mat, dumbbells)</option><option>Full gym</option></select></div>
+            <div class="form-group" style="grid-column:1/-1"><label>Physical Limitations</label><input id="ex-lim" value="Mild knee pain, no high-impact exercises"/></div>
+            <div class="form-group" style="grid-column:1/-1"><label>Goals</label><textarea id="ex-goals" style="min-height:60px;">Improve stamina, manage blood sugar, gentle morning exercises</textarea></div>
+          </div>
+          <button class="btn btn-primary" onclick="generateExercise()" id="ex-btn">🤖 Generate AI Exercise Plan</button>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">⚡</span> Exercise & Blood Sugar</div>
+          <div class="insight-card insight-warn"><div class="insight-title">⚠️ Safe Range</div><div class="insight-body">Exercise only when glucose is 100–250 mg/dL. Check before every session.</div></div>
+          <div class="insight-card insight-good"><div class="insight-title">📉 Expected Drop</div><div class="insight-body">30-min aerobic exercise typically lowers glucose by 20–35 mg/dL.</div></div>
+          <div class="insight-card insight-info"><div class="insight-title">⏰ Best Time</div><div class="insight-body">1–2 hours after meals for optimal glucose management.</div></div>
+        </div>
+      </div>
+      <div id="ex-result-wrap" style="display:none;margin-top:16px;">
+        <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Exercise Plan</div><span class="badge badge-green">Claude AI</span></div><div id="ex-output" class="ai-output"></div></div>
+      </div>
+    </div>
+
+    <div id="exercise-explan" class="tab-content">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">📅</span> This Week's Exercise Schedule</div>
+        <div class="grid-3">
+          <div class="ex-day-card"><div class="ex-day">Monday</div><div class="ex-name">Brisk Walking</div><div class="ex-detail">30 min · outdoor · 4–5 km/h pace</div><span class="ex-intensity int-low">Low Impact</span></div>
+          <div class="ex-day-card"><div class="ex-day">Tuesday</div><div class="ex-name">Yoga + Pranayama</div><div class="ex-detail">45 min · Surya Namaskar 6 rounds + breathing</div><span class="ex-intensity int-low">Low Impact</span></div>
+          <div class="ex-day-card"><div class="ex-day">Wednesday</div><div class="ex-name">Resistance Training</div><div class="ex-detail">30 min · squats, push-ups, planks, lunges (3 sets)</div><span class="ex-intensity int-mod">Moderate</span></div>
+          <div class="ex-day-card"><div class="ex-day">Thursday</div><div class="ex-name">Rest + Light Walk</div><div class="ex-detail">15-min evening walk + gentle stretching</div><span class="ex-intensity int-low">Recovery</span></div>
+          <div class="ex-day-card"><div class="ex-day">Friday</div><div class="ex-name">Cycling</div><div class="ex-detail">40 min · stationary or outdoor at easy pace</div><span class="ex-intensity int-mod">Moderate</span></div>
+          <div class="ex-day-card"><div class="ex-day">Saturday</div><div class="ex-name">Full-Body Circuit</div><div class="ex-detail">35 min · dumbbell rows, step-ups, wall sit, calf raises</div><span class="ex-intensity int-mod">Moderate</span></div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text3);margin-top:12px;">Sunday is a rest day. Post-meal 15-min walks recommended every day.</p>
+      </div>
+    </div>
+
+    <div id="exercise-exsafe" class="tab-content">
+      <div class="grid-2">
+        <div class="card"><div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">🚨</span> Safety Guidelines</div>
+          <div class="insight-card insight-warn"><div class="insight-title">Stop Immediately If...</div><div class="insight-body">You feel dizzy, shaky, excessively sweaty, confused — signs of hypoglycemia.</div></div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+            <li style="font-size:0.85rem;color:var(--text2);">🍬 Carry glucose tablets or juice during workouts</li>
+            <li style="font-size:0.85rem;color:var(--text2);">👟 Wear proper diabetic-safe footwear always</li>
+            <li style="font-size:0.85rem;color:var(--text2);">🌡️ Avoid exercise in extreme heat or humidity</li>
+            <li style="font-size:0.85rem;color:var(--text2);">👁️ Inform someone nearby when exercising alone</li>
+            <li style="font-size:0.85rem;color:var(--text2);">🩺 Consult doctor before starting new regimen</li>
+          </ul>
+        </div>
+        <div class="card"><div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">📈</span> Expected Benefits</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="metric-card" style="--accent-color:var(--green);padding:12px 14px;">
+              <div class="metric-label">Post-meal Glucose Drop</div>
+              <div><span class="metric-value" style="color:var(--green);font-size:1.4rem;">20–30</span><span class="metric-unit">mg/dL</span></div>
+            </div>
+            <div class="metric-card" style="--accent-color:var(--amber);padding:12px 14px;">
+              <div class="metric-label">HbA1c Reduction (3 months)</div>
+              <div><span class="metric-value" style="color:var(--amber);font-size:1.4rem;">0.5–1.0</span><span class="metric-unit">%</span></div>
+            </div>
+            <div class="metric-card" style="--accent-color:var(--blue);padding:12px 14px;">
+              <div class="metric-label">Insulin Sensitivity Improvement</div>
+              <div><span class="metric-value" style="color:var(--blue);font-size:1.4rem;">2–4</span><span class="metric-unit">weeks</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: GLUCOSE LOG
+  ════════════════════════════════════════ -->
+  <div id="page-glucose" class="page">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">➕</span> Log a Reading</div>
+        <div class="form-row form-row-2" style="margin-bottom:14px;">
+          <div class="form-group"><label>Glucose (mg/dL)</label><input id="g-val" type="number" placeholder="e.g. 118"/></div>
+          <div class="form-group"><label>Type</label><select id="g-type"><option>Fasting</option><option>Pre-meal</option><option>Post-meal (1hr)</option><option>Post-meal (2hr)</option><option>Bedtime</option><option>Random</option></select></div>
+          <div class="form-group"><label>Date</label><input id="g-date" type="date"/></div>
+          <div class="form-group"><label>Time</label><input id="g-time" type="time"/></div>
+          <div class="form-group" style="grid-column:1/-1"><label>Notes</label><input id="g-notes" placeholder="Optional note..."/></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn btn-primary btn-sm" onclick="logGlucose()">Log Reading</button>
+          <span id="g-saved" style="display:none;color:var(--green);font-size:0.85rem;">✅ Logged!</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">📊</span> 14-Day Chart</div>
+        <div class="chart-container"><canvas id="glucoseChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title"><span class="ct-icon">📋</span> Recent Readings</div>
+        <button class="btn btn-ghost btn-sm" onclick="analyzeGlucose()">🤖 AI Analysis</button>
+      </div>
+      <div id="glucose-list"></div>
+    </div>
+
+    <div id="g-analysis-wrap" style="display:none;margin-top:16px;">
+      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Glucose Analysis</div><span class="badge badge-green">Claude AI</span></div><div id="g-analysis" class="ai-output"></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: VITALS TRACKER (NEW)
+  ════════════════════════════════════════ -->
+  <div id="page-vitals" class="page">
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="metric-card" style="--accent-color:var(--red)">
+        <div class="metric-label">Blood Pressure</div>
+        <div><span class="metric-value" style="color:var(--amber);font-size:1.5rem;">128/82</span></div>
+        <div class="metric-trend" style="color:var(--text3)">mmHg · Slightly high</div>
+      </div>
+      <div class="metric-card" style="--accent-color:var(--red)">
+        <div class="metric-label">Heart Rate</div>
+        <div><span class="metric-value" style="color:var(--green)">72</span><span class="metric-unit">bpm</span></div>
+        <div class="metric-trend trend-ok">Normal range</div>
+      </div>
+      <div class="metric-card" style="--accent-color:var(--blue)">
+        <div class="metric-label">SpO2</div>
+        <div><span class="metric-value" style="color:var(--green)">98</span><span class="metric-unit">%</span></div>
+        <div class="metric-trend trend-ok">Excellent</div>
+      </div>
+      <div class="metric-card" style="--accent-color:var(--amber)">
+        <div class="metric-label">BMI</div>
+        <div><span class="metric-value" style="color:var(--amber)">27.0</span></div>
+        <div class="metric-trend" style="color:var(--text3)">Overweight range</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="ct-icon">💓</span> Log Vitals</div>
+        <div class="form-row form-row-2" style="margin-bottom:14px;">
+          <div class="form-group"><label>Systolic BP (mmHg)</label><input type="number" id="v-sys" placeholder="e.g. 128"/></div>
+          <div class="form-group"><label>Diastolic BP (mmHg)</label><input type="number" id="v-dia" placeholder="e.g. 82"/></div>
+          <div class="form-group"><label>Heart Rate (bpm)</label><input type="number" id="v-hr" placeholder="e.g. 72"/></div>
+          <div class="form-group"><label>SpO2 (%)</label><input type="number" id="v-spo2" placeholder="e.g. 98"/></div>
+          <div class="form-group"><label>Weight (kg)</label><input type="number" id="v-wt" placeholder="e.g. 78"/></div>
+          <div class="form-group"><label>Temperature (°C)</label><input type="number" id="v-temp" placeholder="e.g. 36.8" step="0.1"/></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="alert('Vitals logged! ✅')">Log Vitals</button>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">💧</span> Daily Water Intake <span class="feature-tag">NEW</span></div>
+        <p style="font-size:0.8rem;color:var(--text3);margin-bottom:12px;">Tap glasses to track your daily water intake (each = 250ml)</p>
+        <div class="water-glasses" id="water-glasses"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+          <div style="font-size:0.85rem;color:var(--text2);">Total: <span id="water-count" style="color:var(--blue);font-weight:600;">0</span> / 8 glasses (2L)</div>
+          <button class="btn btn-ghost btn-sm" onclick="resetWater()">Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title"><span class="ct-icon">🤖</span> AI Vitals Analysis</div>
+        <button class="btn btn-ghost btn-sm" onclick="analyzeVitals()">Analyze</button>
+      </div>
+      <div id="vitals-analysis-wrap" style="display:none;"><div id="vitals-analysis" class="ai-output"></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: RISK ANALYZER (NEW)
+  ════════════════════════════════════════ -->
+  <div id="page-risk" class="page">
+    <div class="grid-2">
+      <div class="card card-glow">
+        <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">🛡️</span> Overall Risk Score <span class="feature-tag">AI-Powered</span></div>
+        <div class="risk-ring-wrap">
+          <div class="risk-ring">
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="58" fill="none" stroke="#1a2419" stroke-width="14"/>
+              <circle cx="70" cy="70" r="58" fill="none" stroke="#4ac878" stroke-width="14" stroke-dasharray="364 365" stroke-linecap="round"/>
+            </svg>
+            <div class="risk-label">
+              <div class="risk-score" style="color:var(--green)">Low</div>
+              <div class="risk-text">Risk Level</div>
+            </div>
+          </div>
+          <div style="font-size:0.82rem;color:var(--text3);margin-top:8px;text-align:center;">Score: 28/100 · Good control</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">🔬</span> Complication Risk Matrix <span class="feature-tag">NEW</span></div>
+        <div class="risk-matrix">
+          <div class="risk-cell" style="background:rgba(74,200,120,0.08);border-color:rgba(74,200,120,0.2);">
+            <div class="risk-cell-label" style="color:var(--text3);font-size:0.68rem;">Retinopathy</div>
+            <div class="risk-cell-val" style="color:var(--green)">Low</div>
+          </div>
+          <div class="risk-cell" style="background:rgba(240,168,50,0.08);border-color:rgba(240,168,50,0.2);">
+            <div class="risk-cell-label" style="color:var(--text3);font-size:0.68rem;">Nephropathy</div>
+            <div class="risk-cell-val" style="color:var(--amber)">Mod.</div>
+          </div>
+          <div class="risk-cell" style="background:rgba(74,200,120,0.08);border-color:rgba(74,200,120,0.2);">
+            <div class="risk-cell-label" style="color:var(--text3);font-size:0.68rem;">Neuropathy</div>
+            <div class="risk-cell-val" style="color:var(--green)">Low</div>
+          </div>
+          <div class="risk-cell" style="background:rgba(240,168,50,0.08);border-color:rgba(240,168,50,0.2);">
+            <div class="risk-cell-label" style="color:var(--text3);font-size:0.68rem;">CVD Risk</div>
+            <div class="risk-cell-val" style="color:var(--amber)">Mod.</div>
+          </div>
+          <div class="risk-cell" style="background:rgba(74,200,120,0.08);border-color:rgba(74,200,120,0.2);">
+            <div class="risk-cell-label" style="color:var(--text3);font-size:0.68rem;">Foot Ulcer</div>
+            <div class="risk-cell-val" style="color:var(--green)">Low</div>
+          </div>
+          <div class="risk-cell" style="background:rgba(74,200,120,0.08);border-color:rgba(74,200,120,0.2);">
+            <div class="risk-cell-label" style="color:var(--text3);font-size:0.68rem;">Hypoglycemia</div>
+            <div class="risk-cell-val" style="color:var(--green)">Low</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title"><span class="ct-icon">📅</span> Glucose Heatmap (Last 4 Weeks) <span class="feature-tag">NEW</span></div>
+        <div style="display:flex;gap:8px;align-items:center;font-size:0.72rem;color:var(--text3);">
+          <span>Low</span>
+          <div style="display:flex;gap:3px;">
+            <div style="width:12px;height:12px;border-radius:2px;background:rgba(74,200,120,0.2);"></div>
+            <div style="width:12px;height:12px;border-radius:2px;background:rgba(74,200,120,0.5);"></div>
+            <div style="width:12px;height:12px;border-radius:2px;background:rgba(74,200,120,0.8);"></div>
+            <div style="width:12px;height:12px;border-radius:2px;background:rgba(240,168,50,0.8);"></div>
+            <div style="width:12px;height:12px;border-radius:2px;background:rgba(232,85,85,0.8);"></div>
+          </div>
+          <span>High</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <div style="width:30px;"></div>
+        <div style="flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">
+          <div style="font-size:0.65rem;color:var(--text3);text-align:center;">Mon</div>
+          <div style="font-size:0.65rem;color:var(--text3);text-align:center;">Tue</div>
+          <div style="font-size:0.65rem;color:var(--text3);text-align:center;">Wed</div>
+          <div style="font-size:0.65rem;color:var(--text3);text-align:center;">Thu</div>
+          <div style="font-size:0.65rem;color:var(--text3);text-align:center;">Fri</div>
+          <div style="font-size:0.65rem;color:var(--text3);text-align:center;">Sat</div>
+          <div style="font-size:0.65rem;color:var(--text3);text-align:center;">Sun</div>
+        </div>
+      </div>
+      <div id="heatmap"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="analyzeRisk()">🤖 Get AI Risk Assessment</button>
+    </div>
+    <div id="risk-result-wrap" style="display:none;margin-top:16px;">
+      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Risk Assessment</div><span class="badge badge-green">Claude AI</span></div><div id="risk-output" class="ai-output"></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: MEAL SCAN AI (NOVEL)
+  ════════════════════════════════════════ -->
+  <div id="page-meal-scan" class="page">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:6px;"><span class="ct-icon">📷</span> AI Meal Scanner <span class="feature-tag">NOVEL FEATURE</span></div>
+        <p style="font-size:0.8rem;color:var(--text3);margin-bottom:16px;">Describe your meal and our AI will instantly estimate glucose impact, carbs, calories, and diabetes suitability.</p>
+        <div class="scan-drop" onclick="scanMeal()">
+          <div class="scan-icon">🍱</div>
+          <div style="font-size:0.9rem;color:var(--text2);margin-bottom:6px;">Describe your meal to AI</div>
+          <div style="font-size:0.78rem;color:var(--text3);">Click to analyze any food instantly</div>
+        </div>
+        <div style="margin-top:14px;">
+          <div class="form-group"><label>Or type your meal here</label><textarea id="meal-desc" style="min-height:80px;" placeholder="e.g. I ate 2 chapatis with dal fry and a small bowl of rice with cucumber salad...">2 idli with sambar, coconut chutney, and a glass of buttermilk</textarea></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:12px;" onclick="analyzeMeal()" id="meal-btn">🤖 Analyze Meal</button>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">📊</span> Scan Result</div>
+        <div id="meal-scan-result">
+          <div style="text-align:center;padding:30px;color:var(--text3);">
+            <div style="font-size:2rem;margin-bottom:8px;">🔍</div>
+            <div style="font-size:0.85rem;">Describe a meal and click Analyze</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">📜</span> Recent Scans</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);">
+          <span style="font-size:1.2rem;">🍳</span>
+          <div style="flex:1;font-size:0.85rem;color:var(--text2);">Egg bhurji + 2 rotis + chai</div>
+          <div style="text-align:right;"><div style="font-size:0.78rem;color:var(--amber)">Moderate GI</div><div style="font-size:0.72rem;color:var(--text3);">~48g carbs · 380 kcal</div></div>
+          <span class="badge badge-green">Safe</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);">
+          <span style="font-size:1.2rem;">🍜</span>
+          <div style="flex:1;font-size:0.85rem;color:var(--text2);">Biryani (1 plate) + raita</div>
+          <div style="text-align:right;"><div style="font-size:0.78rem;color:var(--red)">High GI</div><div style="font-size:0.72rem;color:var(--text3);">~85g carbs · 620 kcal</div></div>
+          <span class="badge badge-red">Caution</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: CIRCADIAN PLAN (NOVEL)
+  ════════════════════════════════════════ -->
+  <div id="page-circadian" class="page">
+    <div class="card card-glow" style="margin-bottom:16px;">
+      <div class="card-header">
+        <div class="card-title"><span class="ct-icon">🌙</span> Circadian-Based Glucose Rhythm <span class="feature-tag">NOVEL FEATURE</span></div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text3);margin-bottom:16px;">Your body's glucose response varies by time of day due to circadian rhythm. This plan optimizes meals and exercise based on your predicted glucose pattern throughout the day.</p>
+      <div class="circadian-row" id="circadian-bars"></div>
+      <div class="circadian-labels" id="circadian-labels"></div>
+      <div style="display:flex;gap:16px;margin-top:12px;font-size:0.75rem;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(74,200,120,0.6);display:inline-block;"></span>Optimal window</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(240,168,50,0.6);display:inline-block;"></span>Moderate resistance</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(232,85,85,0.6);display:inline-block;"></span>High insulin resistance</span>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">🌅</span> Morning (6–10 AM)</div>
+        <div class="insight-card insight-warn"><div class="insight-title">Dawn Phenomenon</div><div class="insight-body">Glucose naturally rises in early morning. Have a low-carb breakfast. Fasting walk is ideal.</div></div>
+        <div style="font-size:0.82rem;color:var(--text3);margin-top:8px;">Recommended: Fasting walk · Oats · Boiled eggs</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">☀️</span> Midday (10 AM–2 PM)</div>
+        <div class="insight-card insight-good"><div class="insight-title">Peak Insulin Sensitivity</div><div class="insight-body">Best window for your largest meal. Glucose tolerance is highest. Good time for resistance training.</div></div>
+        <div style="font-size:0.82rem;color:var(--text3);margin-top:8px;">Recommended: Main meal · Resistance training · Heavy carbs here</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">🌆</span> Evening (6–9 PM)</div>
+        <div class="insight-card insight-warn"><div class="insight-title">Reduced Tolerance</div><div class="insight-body">Insulin sensitivity drops in evening. Keep dinner light and low-carb. Walk after dinner is crucial.</div></div>
+        <div style="font-size:0.82rem;color:var(--text3);margin-top:8px;">Recommended: Light dinner · 15-min walk · No desserts</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title"><span class="ct-icon">🤖</span> Get Personalized Circadian Plan</div>
+      </div>
+      <button class="btn btn-primary" onclick="generateCircadian()">🤖 Generate My Circadian Schedule</button>
+      <div id="circadian-result-wrap" style="display:none;margin-top:14px;">
+        <div id="circadian-output" class="ai-output"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: MIND & MOOD (NOVEL)
+  ════════════════════════════════════════ -->
+  <div id="page-mood" class="page">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:6px;"><span class="ct-icon">🧠</span> Daily Mood Check-in <span class="feature-tag">NOVEL FEATURE</span></div>
+        <p style="font-size:0.8rem;color:var(--text3);margin-bottom:16px;">Stress and mood directly affect blood glucose. Track daily to get AI-personalized mental wellness advice.</p>
+        <div style="font-size:0.82rem;color:var(--text2);margin-bottom:10px;">How are you feeling today?</div>
+        <div class="mood-emoji-row" id="mood-row">
+          <div class="mood-btn" onclick="selectMood(this,'😊 Great')" title="Great">😊</div>
+          <div class="mood-btn" onclick="selectMood(this,'🙂 Good')" title="Good">🙂</div>
+          <div class="mood-btn" onclick="selectMood(this,'😐 Neutral')" title="Neutral">😐</div>
+          <div class="mood-btn" onclick="selectMood(this,'😔 Low')" title="Low">😔</div>
+          <div class="mood-btn" onclick="selectMood(this,'😰 Stressed')" title="Stressed">😰</div>
+        </div>
+        <div style="height:12px;"></div>
+        <div class="form-group"><label>Stress Level Today (1–10)</label><input type="range" id="stress-level" min="1" max="10" value="4" oninput="document.getElementById('stress-val').textContent=this.value" style="width:100%;height:6px;background:var(--bg3);border:none;padding:0;accent-color:var(--green);"/><div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text3);"><span>Low stress</span><span id="stress-val">4</span><span>Very stressed</span></div></div>
+        <div class="form-group" style="margin-top:10px;"><label>Sleep Quality Last Night</label><select id="sleep-quality"><option>Excellent (7–9 hrs)</option><option selected>Good (6–7 hrs)</option><option>Poor (&lt;6 hrs)</option><option>Disturbed</option></select></div>
+        <div class="form-group" style="margin-top:10px;"><label>Any triggers? (optional)</label><input type="text" placeholder="e.g. work deadline, family issue, skipped meals..."/></div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="analyzeMood()">🤖 Get AI Wellness Advice</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">📊</span> Stress → Glucose Correlation</div>
+          <div class="chart-container" style="height:140px;"><canvas id="moodChart"></canvas></div>
+          <div style="font-size:0.78rem;color:var(--text3);margin-top:8px;">High stress days show average +22 mg/dL glucose elevation.</div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">🧘</span> Recommended Today</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+            <li style="font-size:0.85rem;color:var(--text2);">🧘 10-min morning meditation (reduces cortisol)</li>
+            <li style="font-size:0.85rem;color:var(--text2);">🌿 4-7-8 breathing before meals (lowers glucose spike)</li>
+            <li style="font-size:0.85rem;color:var(--text2);">🎵 Calming music during evening walk</li>
+            <li style="font-size:0.85rem;color:var(--text2);">📵 Digital detox 1 hour before bed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="mood-result-wrap" style="display:none;margin-top:16px;">
+      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Wellness Advice</div><span class="badge badge-green">Claude AI</span></div><div id="mood-output" class="ai-output"></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: COMMUNITY
+  ════════════════════════════════════════ -->
+  <div id="page-community" class="page">
+    <div class="grid-2">
+      <div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-header">
+            <div class="card-title"><span class="ct-icon">👥</span> Community Feed</div>
+            <button class="btn btn-primary btn-sm">Post</button>
+          </div>
+          <div class="community-post">
+            <div class="cp-header">
+              <div class="cp-avatar" style="background:rgba(74,200,120,0.2);color:var(--green);">PK</div>
+              <div><div class="cp-name">Priya K.</div><div class="cp-time">2 hours ago · HbA1c 6.5%</div></div>
+              <span class="badge badge-green" style="margin-left:auto;">Verified</span>
+            </div>
+            <div class="cp-text">Switched to ragi dosa for breakfast and my post-meal readings have improved by 30 mg/dL over 2 weeks! The AI diet plan really works 🌟</div>
+          </div>
+          <div class="community-post">
+            <div class="cp-header">
+              <div class="cp-avatar" style="background:rgba(74,158,240,0.2);color:var(--blue);">RS</div>
+              <div><div class="cp-name">Ramesh S.</div><div class="cp-time">5 hours ago · Type 2 · 4 years</div></div>
+            </div>
+            <div class="cp-text">Anyone else notice their glucose spikes less after the evening walk? I've been logging consistently and the correlation is clear. Down from 185 to 148 post-dinner. 💪</div>
+          </div>
+          <div class="community-post">
+            <div class="cp-header">
+              <div class="cp-avatar" style="background:rgba(240,168,50,0.2);color:var(--amber);">ML</div>
+              <div><div class="cp-name">Meena L.</div><div class="cp-time">Yesterday · Gestational</div></div>
+            </div>
+            <div class="cp-text">The circadian meal timing feature is a game changer! Eating my main carbs at lunch instead of dinner has normalized my fasting numbers. Thank you GlucoGuide!</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">📊</span> Community Stats</div>
+          <div class="grid-2">
+            <div style="text-align:center;padding:12px;background:var(--bg3);border-radius:var(--r-sm);border:1px solid var(--border);">
+              <div style="font-family:var(--ff-head);font-size:1.6rem;font-weight:700;color:var(--green);">4,821</div>
+              <div style="font-size:0.72rem;color:var(--text3);">Members</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--bg3);border-radius:var(--r-sm);border:1px solid var(--border);">
+              <div style="font-family:var(--ff-head);font-size:1.6rem;font-weight:700;color:var(--amber);">6.4%</div>
+              <div style="font-size:0.72rem;color:var(--text3);">Avg HbA1c</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--bg3);border-radius:var(--r-sm);border:1px solid var(--border);">
+              <div style="font-family:var(--ff-head);font-size:1.6rem;font-weight:700;color:var(--blue);">89%</div>
+              <div style="font-size:0.72rem;color:var(--text3);">In Target Range</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--bg3);border-radius:var(--r-sm);border:1px solid var(--border);">
+              <div style="font-family:var(--ff-head);font-size:1.6rem;font-weight:700;color:var(--green);">12k</div>
+              <div style="font-size:0.72rem;color:var(--text3);">Logs This Week</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">🏆</span> Top Community Tips</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+            <li style="font-size:0.84rem;color:var(--text2);">1. Walk 10–15 min after every meal</li>
+            <li style="font-size:0.84rem;color:var(--text2);">2. Replace white rice with millets at dinner</li>
+            <li style="font-size:0.84rem;color:var(--text2);">3. Eat fiber first, then protein, then carbs</li>
+            <li style="font-size:0.84rem;color:var(--text2);">4. Log glucose at consistent times daily</li>
+            <li style="font-size:0.84rem;color:var(--text2);">5. Never skip breakfast — it spikes fasting glucose</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: AI CHAT
+  ════════════════════════════════════════ -->
+  <div id="page-chat" class="page">
+    <div class="grid-12">
+      <div class="card" style="display:flex;flex-direction:column;height:620px;">
+        <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">🤖</span> AI Health Coach <span class="feature-tag">Claude AI</span></div>
+        <div class="chat-window" id="chat-window">
+          <div class="chat-bubble bubble-ai">Hello! I'm your GlucoGuide AI health coach powered by Claude. I know your full health profile and can answer anything about your diabetes management — diet, exercise, blood sugar, medications, or lifestyle. What would you like to know?</div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-inp" id="chat-input" placeholder="Ask me anything about your diabetes..." onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="btn btn-primary btn-sm" onclick="sendChat()">Send →</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">⚡</span> Quick Questions</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <button class="qa-pill" onclick="quickQ('My glucose is 210 after lunch. What should I do right now?')">🩸 My glucose is 210 — what to do?</button>
+            <button class="qa-pill" onclick="quickQ('Can I eat mangoes? I love them but heard they spike glucose.')">🥭 Can I eat mangoes?</button>
+            <button class="qa-pill" onclick="quickQ('Is it safe to fast for Ramadan or festivals with Type 2 diabetes?')">🕌 Is fasting safe with diabetes?</button>
+            <button class="qa-pill" onclick="quickQ('What snacks can I eat between meals that wont spike my blood sugar?')">🥜 Safe between-meal snacks?</button>
+            <button class="qa-pill" onclick="quickQ('How do I know if Im going into hypoglycemia and how to treat it?')">⚠️ Hypoglycemia signs & treatment</button>
+            <button class="qa-pill" onclick="quickQ('Give me tips to reduce my HbA1c from 6.8% to below 6.5% in 3 months.')">📉 Reduce HbA1c naturally</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">ℹ️</span> About This AI</div>
+          <p style="font-size:0.82rem;color:var(--text3);line-height:1.7;">GlucoGuide AI is powered by Claude and knows your complete health profile, glucose history, diet and exercise data. All advice is educational. Always consult your doctor for medical decisions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAGE: ACHIEVEMENTS
+  ════════════════════════════════════════ -->
+  <div id="page-achievements" class="page">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">🏆</span> Your Achievements</div>
+        <div class="achievement"><div class="ach-icon">🎯</div><div><div class="ach-name">First Log</div><div class="ach-desc">Logged your first glucose reading</div></div><span class="badge badge-green">Earned</span></div>
+        <div class="achievement"><div class="ach-icon">🔥</div><div><div class="ach-name">7-Day Streak</div><div class="ach-desc">Logged readings for 7 consecutive days</div></div><span class="badge badge-green">Earned</span></div>
+        <div class="achievement"><div class="ach-icon">🏃</div><div><div class="ach-name">Exercise Hero</div><div class="ach-desc">Completed 20 exercise sessions</div></div><span class="badge badge-green">Earned</span></div>
+        <div class="achievement"><div class="ach-icon">📉</div><div><div class="ach-name">Glucose Tamer</div><div class="ach-desc">Kept fasting glucose below 120 for 14 days</div></div><span class="badge badge-green">Earned</span></div>
+        <div class="achievement ach-locked"><div class="ach-icon">🌟</div><div><div class="ach-name">HbA1c Champion</div><div class="ach-desc">Reduce HbA1c below 6.5%</div></div><span class="badge badge-amber">In Progress</span></div>
+        <div class="achievement ach-locked"><div class="ach-icon">🏅</div><div><div class="ach-name">30-Day Master</div><div class="ach-desc">Log readings every day for 30 days</div></div><span class="badge badge-amber">18/30 days</span></div>
+        <div class="achievement ach-locked"><div class="ach-icon">💪</div><div><div class="ach-name">Weight Warrior</div><div class="ach-desc">Lose 5kg from starting weight</div></div><span class="badge badge-amber">2.4/5 kg</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;"><span class="ct-icon">📊</span> Progress Overview</div>
+          <div class="grid-2">
+            <div style="text-align:center;padding:14px;background:var(--bg3);border-radius:var(--r-sm);">
+              <div style="font-family:var(--ff-head);font-size:2rem;font-weight:700;color:var(--green);">4</div>
+              <div style="font-size:0.72rem;color:var(--text3);">Badges Earned</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--bg3);border-radius:var(--r-sm);">
+              <div style="font-family:var(--ff-head);font-size:2rem;font-weight:700;color:var(--amber);">3</div>
+              <div style="font-size:0.72rem;color:var(--text3);">In Progress</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:var(--text2)">Overall Completion</span><span style="color:var(--green)">4/7 (57%)</span></div>
+            <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:57%;background:var(--green)"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">📅</span> This Month's Stats</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;"><span style="color:var(--text3);">Glucose Logs</span><span style="color:var(--text);">48 readings</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;"><span style="color:var(--text3);">Exercise Sessions</span><span style="color:var(--text);">14 sessions</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;"><span style="color:var(--text3);">Avg Fasting Glucose</span><span style="color:var(--green);">112 mg/dL</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;"><span style="color:var(--text3);">Meals Tracked</span><span style="color:var(--text);">38 meals</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;"><span style="color:var(--text3);">Target Days</span><span style="color:var(--green);">21/28 days</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="dataset.js"></script>
+<script>
+// ═══════════ STATE ═══════════
+Chart.defaults.color = '#5a6e5a';
+Chart.defaults.font.family = 'Cabinet Grotesk';
+const CLAUDE_API_KEY = '';
+
+function simulateClaude(system, userMsg) {
+  const prompt = userMsg.toLowerCase();
+  if (system.includes('nutritionist')) {
+    return 'Sample AI diet plan:\n- Breakfast: 2 idli with sambar (approx. 40g carbs)\n- Mid-morning snack: 10 almonds + green tea\n- Lunch: brown rice bowl with dal, vegetables, and cucumber salad (approx. 45g carbs)\n- Evening snack: roasted chana + buttermilk (approx. 15g carbs)\n- Dinner: ragi roti with palak paneer and salad (approx. 35g carbs)\nFocus on low-GI ingredients, fiber-rich vegetables, portion control, and balanced protein to keep glucose stable.';
+  }
+  if (system.includes('fitness specialist')) {
+    return 'Sample exercise plan:\n- Warm-up: 5 min gentle walking or marching in place\n- Workout: 20 min circuit of bodyweight squats, standing rows, wall push-ups, heel raises, and seated core twists\n- Cool-down: 5 min stretching + deep breathing\n- Note: monitor glucose before and after exercise, stay hydrated, and avoid high-impact moves if knee pain is present.';
+  }
+  if (system.includes('circadian biology')) {
+    return 'Sample circadian schedule:\n- Morning (6–9 AM): Low-carb breakfast with protein + short walk\n- Midday (11 AM–2 PM): Main meal with complex carbs and strength-based activity\n- Afternoon (3–5 PM): Light snack and gentle movement\n- Evening (6–9 PM): Light dinner, avoid sweets, follow with a 15-min walk\n- Sleep hygiene: wind down 1 hour before bed and keep a consistent bedtime.';
+  }
+  if (system.includes('mental health')) {
+    return 'Sample wellness advice:\n- High stress can raise blood glucose through cortisol.\n- Practice 5 minutes of deep breathing before meals to reduce spikes.\n- Keep a consistent sleep schedule and avoid screen time 1 hour before bed to support glucose control.';
+  }
+  if (system.includes('health coach')) {
+    return 'I am your GlucoGuide health coach. Keep meals balanced, exercise regularly, and monitor glucose. If you feel unwell, contact your doctor immediately.';
+  }
+  return 'Claude AI is currently unavailable. Please set an API key or try again later.';
+}
+
+let glucoseData = window.dataset?.glucoseData ? JSON.parse(JSON.stringify(window.dataset.glucoseData)) : [
+  { level:108, type:'Fasting', date:'2026-03-24', time:'07:00', notes:'Good sleep' },
+  { level:162, type:'Post-meal (2hr)', date:'2026-03-24', time:'09:30', notes:'After breakfast' },
+  { level:115, type:'Pre-meal', date:'2026-03-25', time:'12:00', notes:'' },
+  { level:178, type:'Post-meal (2hr)', date:'2026-03-25', time:'14:00', notes:'High-carb lunch' },
+  { level:112, type:'Fasting', date:'2026-03-26', time:'07:15', notes:'' },
+  { level:155, type:'Post-meal (1hr)', date:'2026-03-26', time:'13:00', notes:'' },
+  { level:118, type:'Fasting', date:'2026-03-27', time:'07:00', notes:'Exercised yesterday' },
+  { level:190, type:'Post-meal (2hr)', date:'2026-03-27', time:'20:00', notes:'Heavy dinner' },
+  { level:104, type:'Fasting', date:'2026-03-28', time:'07:00', notes:'' },
+  { level:112, type:'Fasting', date:'2026-03-30', time:'07:00', notes:'Today' }
+];
+
+let chatHistory = [];
+let selectedMood = '';
+let waterCount = 0;
+
+// ═══════════ NAVIGATION ═══════════
+function nav(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = {
+    dashboard:'Dashboard', profile:'My Profile', diet:'Diet Planner',
+    exercise:'Exercise Plan', glucose:'Glucose Log', vitals:'Vitals Tracker',
+    risk:'Risk Analyzer', 'meal-scan':'Meal Scan AI', circadian:'Circadian Plan',
+    mood:'Mind & Mood', community:'Community', chat:'AI Health Coach',
+    achievements:'Achievements'
+  };
+  document.getElementById('tb-title').textContent = titles[page] || page;
+  if(page === 'glucose') renderGlucoseList();
+  if(page === 'risk') buildHeatmap();
+  if(page === 'vitals') buildWaterTracker();
+  if(page === 'circadian') buildCircadian();
+}
+
+function switchTab(page, tabId, el) {
+  const pg = document.getElementById('page-'+page);
+  pg.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  pg.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(page+'-'+tabId).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+// ═══════════ PROFILE ═══════════
+function saveProfile() {
+  const w = parseFloat(document.getElementById('p-weight').value);
+  const h = parseFloat(document.getElementById('p-height').value)/100;
+  document.getElementById('p-bmi').value = (w/(h*h)).toFixed(1);
+  const s = document.getElementById('profile-saved');
+  s.style.display = 'inline-flex'; setTimeout(()=>s.style.display='none',2500);
+}
+
+function getProfile() {
+  return `Patient Profile:
+- Name: ${document.getElementById('p-name')?.value||'Alex Kumar'}
+- Age: ${document.getElementById('p-age')?.value||'48'}, Gender: ${document.getElementById('p-gender')?.value||'Male'}
+- Weight: ${document.getElementById('p-weight')?.value||'78'}kg, Height: ${document.getElementById('p-height')?.value||'170'}cm
+- Diabetes: ${document.getElementById('p-type')?.value||'Type 2'}, Since: ${document.getElementById('p-year')?.value||'2018'}
+- HbA1c: ${document.getElementById('p-hba1c')?.value||'6.8'}%, Fasting Glucose: ${document.getElementById('p-fasting')?.value||'112'} mg/dL
+- Medications: ${document.getElementById('p-meds')?.value||'Metformin 500mg'}
+- Activity: ${document.getElementById('p-activity')?.value||'Lightly Active'}
+- Diet: ${document.getElementById('p-diet')?.value||'Vegetarian'}, Cuisine: ${document.getElementById('p-cuisine')?.value||'South Indian'}
+- Goals: ${document.getElementById('p-goals')?.value||'Reduce HbA1c below 6.5%'}
+- Conditions: ${document.getElementById('p-cond')?.value||'Mild hypertension'}`;
+}
+
+function populateProfileFromDataset() {
+  if (!window.dataset || !window.dataset.profile) return;
+  const profile = window.dataset.profile;
+  const apply = (id, value) => {
+    const el = document.getElementById(id);
+    if (!el || value === undefined || value === null) return;
+    el.value = value;
+  };
+  apply('p-name', profile.name);
+  apply('p-age', profile.age);
+  apply('p-gender', profile.gender);
+  apply('p-weight', profile.weight);
+  apply('p-height', profile.height);
+  apply('p-bmi', profile.bmi);
+  apply('p-type', profile.diabetesType);
+  apply('p-year', profile.diagnosisYear);
+  apply('p-hba1c', profile.hba1c);
+  apply('p-fasting', profile.fasting);
+  apply('p-meds', profile.meds);
+  apply('p-cond', profile.cond);
+  apply('p-activity', profile.activity);
+  apply('p-exdays', profile.exdays);
+  apply('p-sleep', profile.sleep);
+  apply('p-stress', profile.stress);
+  apply('p-goals', profile.goals);
+  apply('p-diet', profile.diet);
+  apply('p-cuisine', profile.cuisine);
+  apply('p-dislikes', profile.dislikes);
+  apply('p-cal', profile.cal);
+}
+
+// ═══════════ CLAUDE API ═══════════
+async function callClaude(system, userMsg, outputEl) {
+  outputEl.innerHTML = '<div class="ai-loading"><div class="loader"></div> Generating personalized insights with Claude AI...</div>';
+  if (!CLAUDE_API_KEY) {
+    const text = simulateClaude(system, userMsg);
+    outputEl.textContent = text;
+    return text;
+  }
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':CLAUDE_API_KEY},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system,
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(c=>c.text||'').join('')||data.completion||'No response.';
+    outputEl.textContent = text;
+    return text;
+  } catch(e) {
+    const text = simulateClaude(system, userMsg);
+    outputEl.textContent = text;
+    return text;
+  }
+}
+
+// ═══════════ DIET AI ═══════════
+async function generateDiet() {
+  const btn = document.getElementById('diet-btn');
+  btn.disabled = true; btn.textContent = 'Generating...';
+  document.getElementById('diet-result-wrap').style.display = 'block';
+  const out = document.getElementById('diet-output');
+  await callClaude(
+    `You are a certified diabetes nutritionist. Create detailed, personalized, culturally-appropriate meal plans for Indian diabetic patients. Focus on glycemic control. Include specific portions, carb counts, and preparation tips.`,
+    `${getProfile()}\n\nParameters: ${document.getElementById('diet-dur').value}, ${document.getElementById('diet-cal-sel').value} kcal, Glucose today: ${document.getElementById('diet-glu').value} mg/dL, Activity: ${document.getElementById('diet-act').value}\nNotes: ${document.getElementById('diet-notes').value}\n\nCreate a detailed personalized daily meal plan with breakfast, snack, lunch, evening snack, dinner. Include food names, portions, carb counts, and brief diabetes-specific tips for each meal.`,
+    out
+  );
+  btn.disabled = false; btn.textContent = '🤖 Generate AI Diet Plan';
+}
+
+// ═══════════ EXERCISE AI ═══════════
+async function generateExercise() {
+  const btn = document.getElementById('ex-btn');
+  btn.disabled = true; btn.textContent = 'Generating...';
+  document.getElementById('ex-result-wrap').style.display = 'block';
+  await callClaude(
+    `You are a certified diabetes fitness specialist. Create safe, effective exercise plans for diabetic patients considering their glucose levels, medications, and limitations. Always prioritize safety.`,
+    `${getProfile()}\n\nExercise Params: Fitness: ${document.getElementById('ex-fit').value}, Time: ${document.getElementById('ex-time').value}, Current glucose: ${document.getElementById('ex-glu').value} mg/dL, Equipment: ${document.getElementById('ex-eq').value}, Limitations: ${document.getElementById('ex-lim').value}, Goals: ${document.getElementById('ex-goals').value}\n\nCreate a detailed weekly exercise plan with specific exercises, sets/reps/duration, warm-up, cool-down, and glucose monitoring recommendations.`,
+    document.getElementById('ex-output')
+  );
+  btn.disabled = false; btn.textContent = '🤖 Generate AI Exercise Plan';
+}
+
+// ═══════════ GLUCOSE LOG ═══════════
+function setDefaults() {
+  const now = new Date();
+  document.getElementById('g-date').value = now.toISOString().split('T')[0];
+  document.getElementById('g-time').value = now.toTimeString().slice(0,5);
+}
+
+function logGlucose() {
+  const v = parseInt(document.getElementById('g-val').value);
+  if(!v||v<40||v>600) { alert('Enter valid glucose (40–600 mg/dL)'); return; }
+  glucoseData.unshift({level:v, type:document.getElementById('g-type').value, date:document.getElementById('g-date').value, time:document.getElementById('g-time').value, notes:document.getElementById('g-notes').value});
+  renderGlucoseList();
+  updateGlucoseChart();
+  document.getElementById('g-val').value='';
+  document.getElementById('g-notes').value='';
+  const s = document.getElementById('g-saved');
+  s.style.display='inline-block'; setTimeout(()=>s.style.display='none',2000);
+}
+
+function renderGlucoseList() {
+  const list = document.getElementById('glucose-list');
+  if(!list) return;
+  list.innerHTML = glucoseData.slice(0,8).map(e=>{
+    const col = e.level<70?'var(--amber)':e.level<=130?'var(--green)':e.level<=180?'var(--amber)':'var(--red)';
+    const lbl = e.level<70?'Low':e.level<=130?'Normal':e.level<=180?'Elevated':'High';
+    const lcls = e.level<70?'badge-amber':e.level<=180?'badge-green':'badge-red';
+    return `<div class="g-entry">
+      <div class="g-value" style="color:${col}">${e.level}</div>
+      <div style="font-size:0.7rem;color:var(--text3)">mg/dL</div>
+      <span class="badge ${lcls}">${lbl}</span>
+      <div class="g-meta"><div class="g-type">${e.type}</div><div class="g-time">${e.date} · ${e.time}</div></div>
+      ${e.notes?`<div style="font-size:0.75rem;color:var(--text3);font-style:italic;">"${e.notes}"</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function analyzeGlucose() {
+  document.getElementById('g-analysis-wrap').style.display = 'block';
+  const readings = glucoseData.slice(0,10).map(e=>`${e.date} ${e.time} — ${e.type}: ${e.level} mg/dL${e.notes?' ('+e.notes+')':''}`).join('\n');
+  await callClaude(
+    `You are a diabetes care specialist. Analyze glucose readings and provide actionable, personalized insights. Identify patterns, flag concerning readings, and give specific recommendations.`,
+    `${getProfile()}\n\nRecent glucose readings:\n${readings}\n\nAnalyze these readings: 1) Key patterns observed, 2) Any concerning readings and possible causes, 3) Specific dietary/lifestyle adjustments, 4) Overall assessment`,
+    document.getElementById('g-analysis')
+  );
+}
+
+// ═══════════ VITALS ═══════════
+function buildWaterTracker() {
+  const c = document.getElementById('water-glasses');
+  if(!c||c.children.length>0) return;
+  for(let i=0;i<8;i++){
+    const g = document.createElement('div');
+    g.className='water-glass';
+    g.onclick = ()=>toggleWater(i, g);
+    g.dataset.idx = i;
+    c.appendChild(g);
+  }
+}
+
+function toggleWater(idx, el) {
+  if(el.classList.contains('filled')) {
+    el.classList.remove('filled'); waterCount--;
+  } else {
+    el.classList.add('filled'); waterCount++;
+  }
+  document.getElementById('water-count').textContent = waterCount;
+}
+
+function resetWater() {
+  waterCount = 0;
+  document.querySelectorAll('.water-glass').forEach(g=>g.classList.remove('filled'));
+  document.getElementById('water-count').textContent = '0';
+}
+
+async function analyzeVitals() {
+  document.getElementById('vitals-analysis-wrap').style.display = 'block';
+  await callClaude(
+    `You are a diabetes health specialist. Analyze vitals data for a diabetic patient and provide concise, actionable insights with diabetes-specific considerations.`,
+    `${getProfile()}\n\nVitals today: BP ${document.getElementById('v-sys')?.value||'128'}/${document.getElementById('v-dia')?.value||'82'} mmHg, HR ${document.getElementById('v-hr')?.value||'72'} bpm, SpO2 ${document.getElementById('v-spo2')?.value||'98'}%, Weight ${document.getElementById('v-wt')?.value||'78'}kg\n\nAnalyze these vitals, identify any concerns, and provide specific recommendations for this diabetic patient.`,
+    document.getElementById('vitals-analysis')
+  );
+}
+
+// ═══════════ RISK ANALYZER ═══════════
+function buildHeatmap() {
+  const hm = document.getElementById('heatmap');
+  if(!hm||hm.children.length>0) return;
+  const vals = [110,118,105,122,116,108,114,115,118,112,110,104,108,112,120,115,108,112,118,105,122,116,108,114,115,118,112,110];
+  const grid = document.createElement('div');
+  grid.style.cssText='display:flex;gap:4px;';
+  const weeks = [[],[],[],[]]
+  vals.forEach((v,i)=>weeks[Math.floor(i/7)].push(v));
+  weeks.forEach(week=>{
+    const col = document.createElement('div');
+    col.style.cssText='display:flex;flex-direction:column;gap:3px;flex:1;';
+    week.forEach((v,i)=>{
+      const cell = document.createElement('div');
+      const alpha = Math.min(0.9, (v-80)/140);
+      const bg = v>180?`rgba(232,85,85,${alpha})`:v>130?`rgba(240,168,50,${alpha})`:v<70?`rgba(240,168,50,0.5)`:`rgba(74,200,120,${alpha})`;
+      cell.style.cssText=`height:18px;border-radius:3px;background:${bg};cursor:pointer;`;
+      cell.title=`${v} mg/dL`;
+      col.appendChild(cell);
+    });
+    grid.appendChild(col);
+  });
+  hm.appendChild(grid);
+}
+
+async function analyzeRisk() {
+  document.getElementById('risk-result-wrap').style.display = 'block';
+  await callClaude(
+    `You are a diabetes complication prevention specialist. Assess diabetic complication risks and provide actionable prevention strategies.`,
+    `${getProfile()}\n\nAnalyze the complication risk for this patient and provide: 1) Top 3 risk areas requiring immediate attention, 2) Specific prevention strategies for each, 3) Recommended screening tests, 4) Lifestyle modifications to reduce risk`,
+    document.getElementById('risk-output')
+  );
+}
+
+// ═══════════ MEAL SCAN AI ═══════════
+function scanMeal() {
+  const desc = document.getElementById('meal-desc');
+  desc.focus();
+}
+
+async function analyzeMeal() {
+  const desc = document.getElementById('meal-desc').value.trim();
+  if (!desc) { alert('Please describe your meal first'); return; }
+  const btn = document.getElementById('meal-btn');
+  btn.disabled = true; btn.textContent = 'Scanning...';
+  const result = document.getElementById('meal-scan-result');
+  result.innerHTML = '<div class="ai-loading"><div class="loader"></div> Analyzing meal composition...</div>';
+  await callClaude(
+    `You are a diabetes nutrition expert. Analyze meals and provide: estimated carbs, calories, GI rating (Low/Medium/High), diabetes suitability (Safe/Caution/Avoid), glucose impact prediction, and specific improvement suggestions. Be concise and practical. Format with clear sections.`,
+    `Patient: Type 2 Diabetic, HbA1c 6.8%, South Indian Vegetarian\n\nMeal described: "${desc}"\n\nProvide: 1) Estimated carbs (g), 2) Estimated calories, 3) Glycemic Index rating, 4) Diabetes suitability verdict, 5) Predicted blood sugar impact (mg/dL rise), 6) What to add/remove to make it better for blood sugar control.`,
+    result
+  );
+  btn.disabled = false; btn.textContent = '🤖 Analyze Meal';
+}
+
+// ═══════════ CIRCADIAN ═══════════
+function buildCircadian() {
+  const bar = document.getElementById('circadian-bars');
+  const lab = document.getElementById('circadian-labels');
+  if (!bar || !lab || bar.children.length > 0) return;
+  const hours = ['6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
+  const resistance = [70,65,55,45,30,25,20,18,20,28,35,45,55,65,72,78,82,85];
+  const maxR = Math.max(...resistance);
+  hours.forEach((h,i) => {
+    const pct = resistance[i] / maxR;
+    const col = pct < 0.35 ? 'rgba(74,200,120,0.6)' : pct < 0.65 ? 'rgba(240,168,50,0.6)' : 'rgba(232,85,85,0.6)';
+    const level = pct < 0.35 ? 'Low' : pct < 0.65 ? 'Moderate' : 'High';
+    const b = document.createElement('div');
+    b.className = 'circadian-bar';
+    b.style.cssText = `height:${Math.round(pct * 100)}%;background:${col};`;
+    b.dataset.tip = `${h}:00 · ${level} insulin resistance`;
+    bar.appendChild(b);
+    if (i % 3 === 0) {
+      const l = document.createElement('div');
+      l.style.cssText = 'flex:1;font-size:0.65rem;color:var(--text3);text-align:center;';
+      l.textContent = h + ':00';
+      lab.appendChild(l);
+    }
+  });
+}
+
+async function generateCircadian() {
+  document.getElementById('circadian-result-wrap').style.display = 'block';
+  await callClaude(
+    `You are a circadian biology and diabetes specialist. Create personalized circadian-rhythm-based meal and exercise schedules that optimize blood sugar control throughout the day.`,
+    `${getProfile()}\n\nCreate a detailed hour-by-hour circadian schedule for this diabetic patient optimizing for: 1) Meal timing based on insulin sensitivity peaks, 2) Exercise timing for maximum glucose benefit, 3) Medication timing, 4) Sleep/wake optimization, 5) Specific food recommendations for each meal window`,
+    document.getElementById('circadian-output')
+  );
+}
+
+// ═══════════ MOOD ═══════════
+function selectMood(el, mood) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMood = mood;
+}
+
+async function analyzeMood() {
+  document.getElementById('mood-result-wrap').style.display = 'block';
+  const stress = document.getElementById('stress-level').value;
+  const sleep = document.getElementById('sleep-quality').value;
+  await callClaude(
+    `You are a diabetes mental health and wellness coach. Provide empathetic, practical mental wellness advice that directly connects to blood sugar management.`,
+    `${getProfile()}\n\nToday's mental state: Mood: ${selectedMood||'Not specified'}, Stress level: ${stress}/10, Sleep: ${sleep}\n\nProvide: 1) How today's stress/mood may impact blood glucose, 2) Specific relaxation techniques for diabetics, 3) Mind-body strategies to reduce glucose spikes from stress, 4) Encouragement and practical tips for today`,
+    document.getElementById('mood-output')
+  );
+}
+
+// ═══════════ CHAT ═══════════
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+  addBubble(msg, 'user');
+  chatHistory.push({role:'user',content:msg});
+  const typing = addBubble('...', 'ai');
+  try {
+    const text = await callClaude(
+      `You are GlucoGuide, a warm and knowledgeable AI diabetes health coach. You know the patient's complete health profile. Give concise, practical, personalized advice (3-5 sentences unless detailed plan needed). Always prioritize safety. Remind to consult doctor for medical decisions.`,
+      `${getProfile()}\n\nUser: ${msg}`,
+      typing
+    );
+    chatHistory.push({role:'assistant',content:text});
+  } catch (e) {
+    typing.textContent = 'Connection error. Try again.';
+  }
+}
+
+function quickQ(msg) {
+  document.getElementById('chat-input').value = msg;
+  sendChat();
+}
+
+function addBubble(text, role) {
+  const win = document.getElementById('chat-window');
+  const d = document.createElement('div');
+  d.className = `chat-bubble bubble-${role}`;
+  d.textContent = text;
+  win.appendChild(d);
+  win.scrollTop = win.scrollHeight;
+  return d;
+}
+
+// ═══════════ CHARTS ═══════════
+function initCharts() {
+  // Trend chart
+  const ctx1 = document.getElementById('trendChart');
+  if(!ctx1) return;
+  new Chart(ctx1,{
+    type:'line',
+    data:{
+      labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[
+        {label:'Fasting',data:[108,115,112,118,104,110,112],borderColor:'#4ac878',backgroundColor:'rgba(74,200,120,0.08)',tension:0.4,fill:true,pointBackgroundColor:'#4ac878',pointRadius:4,borderWidth:2},
+        {label:'Post-meal',data:[162,178,155,190,160,172,168],borderColor:'#f0a832',backgroundColor:'transparent',tension:0.4,fill:false,borderDash:[5,4],pointBackgroundColor:'#f0a832',pointRadius:4,borderWidth:2}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{color:'#5a6e5a',boxWidth:10,font:{size:11}}}},
+      scales:{
+        y:{min:80,max:220,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6e5a',font:{size:10},callback:v=>v}},
+        x:{grid:{display:false},ticks:{color:'#5a6e5a',font:{size:10}}}
+      }
+    }
+  });
+
+  // Glucose chart
+  const ctx2 = document.getElementById('glucoseChart');
+  if(!ctx2) return;
+  const days=['M17','M18','M19','M20','M21','M22','M23','M24','M25','M26','M27','M28','M29','M30'];
+  const vals=[110,118,105,122,116,108,114,115,118,112,110,104,108,112];
+  glucoseChartInst = new Chart(ctx2,{
+    type:'bar',
+    data:{
+      labels:days,
+      datasets:[{label:'Fasting Glucose',data:vals,backgroundColor:vals.map(v=>v>130?'rgba(232,85,85,0.6)':v<70?'rgba(240,168,50,0.6)':'rgba(74,200,120,0.6)'),borderRadius:4}]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{min:70,max:180,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6e5a',font:{size:10}}},
+        x:{grid:{display:false},ticks:{color:'#5a6e5a',font:{size:9},maxRotation:45}}
+      }
+    }
+  });
+
+  // Mood correlation chart
+  const ctx3 = document.getElementById('moodChart');
+  if(!ctx3) return;
+  new Chart(ctx3,{
+    type:'line',
+    data:{
+      labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[
+        {label:'Glucose',data:[112,128,118,145,115,120,112],borderColor:'#4ac878',tension:0.4,yAxisID:'y'},
+        {label:'Stress',data:[3,7,4,8,4,3,2],borderColor:'#f0a832',tension:0.4,yAxisID:'y2',borderDash:[4,3]}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{color:'#5a6e5a',boxWidth:10,font:{size:10}}}},
+      scales:{
+        y:{position:'left',grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6e5a',font:{size:10}}},
+        y2:{position:'right',grid:{display:false},ticks:{color:'#5a6e5a',font:{size:10}},min:0,max:10},
+        x:{grid:{display:false},ticks:{color:'#5a6e5a',font:{size:10}}}
+      }
+    }
+  });
+}
+
+let glucoseChartInst;
+function updateGlucoseChart() {
+  if (!glucoseChartInst) return;
+  const recent = glucoseData.slice(0,14).reverse();
+  const labels = recent.map(e => `${e.date.slice(5)} ${e.time}`);
+  const values = recent.map(e => e.level);
+  glucoseChartInst.data.labels = labels;
+  glucoseChartInst.data.datasets[0].data = values;
+  glucoseChartInst.data.datasets[0].backgroundColor = values.map(v =>
+    v > 180 ? 'rgba(232,85,85,0.6)' : v > 130 ? 'rgba(240,168,50,0.6)' : v < 70 ? 'rgba(240,168,50,0.6)' : 'rgba(74,200,120,0.6)'
+  );
+  glucoseChartInst.update();
+}
+
+// ═══════════ INIT ═══════════
+populateProfileFromDataset();
+setDefaults();
+renderGlucoseList();
+setTimeout(()=>{ document.getElementById('splash').style.display='none'; initCharts(); }, 2600);
+</script>
+</body>
+</html>

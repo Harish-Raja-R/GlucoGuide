@@ -1,0 +1,62 @@
+window.dataset = {
+  profile: {
+    name: 'Alex Kumar',
+    age: 48,
+    gender: 'Male',
+    weight: 78,
+    height: 170,
+    bmi: 27.0,
+    diabetesType: 'Type 2',
+    diagnosisYear: 2018,
+    hba1c: 6.8,
+    fasting: 112,
+    meds: 'Metformin 500mg twice daily',
+    cond: 'Mild hypertension. Lactose sensitive. No food allergies.',
+    activity: 'Lightly Active',
+    exdays: '3-4',
+    sleep: 7,
+    stress: 'Moderate',
+    goals: 'Reduce HbA1c below 6.5%, lose 5kg in 3 months, improve energy.',
+    diet: 'Vegetarian',
+    cuisine: 'South Indian',
+    dislikes: 'Bitter gourd, raw onion',
+    cal: '1600-1800 kcal'
+  },
+  glucoseData: [
+    { level: 108, type: 'Fasting', date: '2026-03-16', time: '07:08', notes: 'Good sleep' },
+    { level: 162, type: 'Post-meal (2hr)', date: '2026-03-16', time: '09:25', notes: 'Breakfast dosa + sambhar' },
+    { level: 118, type: 'Pre-meal', date: '2026-03-17', time: '12:05', notes: '' },
+    { level: 178, type: 'Post-meal (2hr)', date: '2026-03-17', time: '14:15', notes: 'Heavy rice lunch' },
+    { level: 112, type: 'Fasting', date: '2026-03-18', time: '07:12', notes: '' },
+    { level: 155, type: 'Post-meal (1hr)', date: '2026-03-18', time: '13:05', notes: 'Chapati + dal' },
+    { level: 124, type: 'Pre-meal', date: '2026-03-19', time: '12:00', notes: 'Light breakfast' },
+    { level: 140, type: 'Post-meal (2hr)', date: '2026-03-19', time: '14:10', notes: 'Lunch with sweet lassi' },
+    { level: 104, type: 'Fasting', date: '2026-03-20', time: '07:04', notes: '30-min walk yesterday' },
+    { level: 132, type: 'Post-meal (1hr)', date: '2026-03-20', time: '13:20', notes: 'Mixed vegetable curry' },
+    { level: 118, type: 'Fasting', date: '2026-03-21', time: '07:10', notes: 'Feeling good' },
+    { level: 168, type: 'Post-meal (2hr)', date: '2026-03-21', time: '20:15', notes: 'Dinner rice and paneer' },
+    { level: 122, type: 'Pre-meal', date: '2026-03-22', time: '12:10', notes: 'Skipped snack' },
+    { level: 178, type: 'Post-meal (2hr)', date: '2026-03-22', time: '14:30', notes: 'Lunch outside' },
+    { level: 110, type: 'Fasting', date: '2026-03-23', time: '07:05', notes: 'Good hydration' },
+    { level: 145, type: 'Post-meal (1hr)', date: '2026-03-23', time: '12:40', notes: 'Chapati + dal' },
+    { level: 116, type: 'Pre-meal', date: '2026-03-24', time: '12:00', notes: 'Light breakfast' },
+    { level: 128, type: 'Post-meal (2hr)', date: '2026-03-24', time: '14:20', notes: 'Brown rice lunch' },
+    { level: 108, type: 'Fasting', date: '2026-03-25', time: '07:07', notes: 'Balanced dinner' },
+    { level: 150, type: 'Post-meal (1hr)', date: '2026-03-25', time: '13:10', notes: 'Ate chapati + curry' },
+    { level: 112, type: 'Fasting', date: '2026-03-26', time: '07:15', notes: '' },
+    { level: 155, type: 'Post-meal (1hr)', date: '2026-03-26', time: '13:00', notes: '' },
+    { level: 118, type: 'Fasting', date: '2026-03-27', time: '07:00', notes: 'Exercised yesterday' },
+    { level: 190, type: 'Post-meal (2hr)', date: '2026-03-27', time: '20:00', notes: 'Heavy dinner' },
+    { level: 104, type: 'Fasting', date: '2026-03-28', time: '07:00', notes: '' },
+    { level: 112, type: 'Fasting', date: '2026-03-30', time: '07:00', notes: 'Today' }
+  ],
+  mealScans: [
+    { meal: 'Egg bhurji + 2 rotis + chai', gi: 'Moderate', carbs: 48, kcal: 380, verdict: 'Safe' },
+    { meal: 'Biryani (1 plate) + raita', gi: 'High', carbs: 85, kcal: 620, verdict: 'Caution' }
+  ],
+  communityPosts: [
+    { initials: 'PK', name: 'Priya K.', time: '2 hours ago', badge: 'Verified', text: 'Switched to ragi dosa for breakfast and my post-meal readings have improved by 30 mg/dL over 2 weeks! The AI diet plan really works 🌟' },
+    { initials: 'RS', name: 'Ramesh S.', time: '5 hours ago', badge: '', text: 'Anyone else notice their glucose spikes less after the evening walk? I\'ve been logging consistently and the correlation is clear. Down from 185 to 148 post-dinner. 💪' },
+    { initials: 'ML', name: 'Meena L.', time: 'Yesterday', badge: '', text: 'The circadian meal timing feature is a game changer! Eating my main carbs at lunch instead of dinner has normalized my fasting numbers. Thank you GlucoGuide!' }
+  ]
+};
