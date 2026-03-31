@@ -850,7 +850,7 @@ input::placeholder { color: var(--text3); }
         <div class="card">
           <div class="card-header">
             <div class="card-title"><span class="ct-icon">🤖</span> AI-Generated Diet Plan</div>
-            <span class="badge badge-green">Claude AI</span>
+            <span class="badge badge-green">Gemini AI</span>
           </div>
           <div id="diet-output" class="ai-output"></div>
         </div>
@@ -960,7 +960,7 @@ input::placeholder { color: var(--text3); }
         </div>
       </div>
       <div id="ex-result-wrap" style="display:none;margin-top:16px;">
-        <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Exercise Plan</div><span class="badge badge-green">Claude AI</span></div><div id="ex-output" class="ai-output"></div></div>
+        <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Exercise Plan</div><span class="badge badge-green">Gemini AI</span></div><div id="ex-output" class="ai-output"></div></div>
       </div>
     </div>
 
@@ -1045,7 +1045,7 @@ input::placeholder { color: var(--text3); }
     </div>
 
     <div id="g-analysis-wrap" style="display:none;margin-top:16px;">
-      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Glucose Analysis</div><span class="badge badge-green">Claude AI</span></div><div id="g-analysis" class="ai-output"></div></div>
+      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Glucose Analysis</div><span class="badge badge-green">Gemini AI</span></div><div id="g-analysis" class="ai-output"></div></div>
     </div>
   </div>
 
@@ -1189,7 +1189,7 @@ input::placeholder { color: var(--text3); }
       <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="analyzeRisk()">🤖 Get AI Risk Assessment</button>
     </div>
     <div id="risk-result-wrap" style="display:none;margin-top:16px;">
-      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Risk Assessment</div><span class="badge badge-green">Claude AI</span></div><div id="risk-output" class="ai-output"></div></div>
+      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Risk Assessment</div><span class="badge badge-green">Gemini AI</span></div><div id="risk-output" class="ai-output"></div></div>
     </div>
   </div>
 
@@ -1325,7 +1325,7 @@ input::placeholder { color: var(--text3); }
       </div>
     </div>
     <div id="mood-result-wrap" style="display:none;margin-top:16px;">
-      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Wellness Advice</div><span class="badge badge-green">Claude AI</span></div><div id="mood-output" class="ai-output"></div></div>
+      <div class="card"><div class="card-header"><div class="card-title"><span class="ct-icon">🤖</span> AI Wellness Advice</div><span class="badge badge-green">Gemini AI</span></div><div id="mood-output" class="ai-output"></div></div>
     </div>
   </div>
 
@@ -1406,9 +1406,9 @@ input::placeholder { color: var(--text3); }
   <div id="page-chat" class="page">
     <div class="grid-12">
       <div class="card" style="display:flex;flex-direction:column;height:620px;">
-        <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">🤖</span> AI Health Coach <span class="feature-tag">Claude AI</span></div>
+        <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">🤖</span> AI Health Coach <span class="feature-tag">Gemini AI</span></div>
         <div class="chat-window" id="chat-window">
-          <div class="chat-bubble bubble-ai">Hello! I'm your GlucoGuide AI health coach powered by Claude. I know your full health profile and can answer anything about your diabetes management — diet, exercise, blood sugar, medications, or lifestyle. What would you like to know?</div>
+          <div class="chat-bubble bubble-ai">Hello! I'm your GlucoGuide AI health coach powered by Gemini. I know your full health profile and can answer anything about your diabetes management — diet, exercise, blood sugar, medications, or lifestyle. What would you like to know?</div>
         </div>
         <div class="chat-input-row">
           <input class="chat-inp" id="chat-input" placeholder="Ask me anything about your diabetes..." onkeydown="if(event.key==='Enter')sendChat()"/>
@@ -1429,7 +1429,7 @@ input::placeholder { color: var(--text3); }
         </div>
         <div class="card">
           <div class="card-title" style="margin-bottom:12px;"><span class="ct-icon">ℹ️</span> About This AI</div>
-          <p style="font-size:0.82rem;color:var(--text3);line-height:1.7;">GlucoGuide AI is powered by Claude and knows your complete health profile, glucose history, diet and exercise data. All advice is educational. Always consult your doctor for medical decisions.</p>
+          <p style="font-size:0.82rem;color:var(--text3);line-height:1.7;">GlucoGuide AI is powered by Gemini and knows your complete health profile, glucose history, diet and exercise data. All advice is educational. Always consult your doctor for medical decisions.</p>
         </div>
       </div>
     </div>
@@ -1491,9 +1491,10 @@ input::placeholder { color: var(--text3); }
 // ═══════════ STATE ═══════════
 Chart.defaults.color = '#5a6e5a';
 Chart.defaults.font.family = 'Cabinet Grotesk';
-const CLAUDE_API_KEY = '';
+const AI_BACKEND_URL = '/api/ai';
+const USE_LOCAL_FALLBACK = true;
 
-function simulateClaude(system, userMsg) {
+function simulateGemini(system, userMsg) {
   const prompt = userMsg.toLowerCase();
   if (system.includes('nutritionist')) {
     return 'Sample AI diet plan:\n- Breakfast: 2 idli with sambar (approx. 40g carbs)\n- Mid-morning snack: 10 almonds + green tea\n- Lunch: brown rice bowl with dal, vegetables, and cucumber salad (approx. 45g carbs)\n- Evening snack: roasted chana + buttermilk (approx. 15g carbs)\n- Dinner: ragi roti with palak paneer and salad (approx. 35g carbs)\nFocus on low-GI ingredients, fiber-rich vegetables, portion control, and balanced protein to keep glucose stable.';
@@ -1510,7 +1511,7 @@ function simulateClaude(system, userMsg) {
   if (system.includes('health coach')) {
     return 'I am your GlucoGuide health coach. Keep meals balanced, exercise regularly, and monitor glucose. If you feel unwell, contact your doctor immediately.';
   }
-  return 'Claude AI is currently unavailable. Please set an API key or try again later.';
+  return 'AI service is currently unavailable. Please start the backend or try again later.';
 }
 
 let glucoseData = window.dataset?.glucoseData ? JSON.parse(JSON.stringify(window.dataset.glucoseData)) : [
@@ -1612,33 +1613,33 @@ function populateProfileFromDataset() {
   apply('p-cal', profile.cal);
 }
 
-// ═══════════ CLAUDE API ═══════════
-async function callClaude(system, userMsg, outputEl) {
-  outputEl.innerHTML = '<div class="ai-loading"><div class="loader"></div> Generating personalized insights with Claude AI...</div>';
-  if (!CLAUDE_API_KEY) {
-    const text = simulateClaude(system, userMsg);
-    outputEl.textContent = text;
-    return text;
-  }
+// ═══════════ AI API ═══════════
+async function callGemini(system, userMsg, outputEl) {
+  outputEl.innerHTML = '<div class="ai-loading"><div class="loader"></div> Generating personalized insights with Gemini 2.5 Flash...</div>';
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':CLAUDE_API_KEY},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system,
-        messages:[{role:'user',content:userMsg}]
-      })
+    const res = await fetch(AI_BACKEND_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ system, prompt: userMsg, model: 'gemini-2.5-flash' })
     });
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`AI backend error ${res.status}: ${errorText}`);
+    }
     const data = await res.json();
-    const text = data.content?.map(c=>c.text||'').join('')||data.completion||'No response.';
+    console.log('AI response payload:', data);
+    const text = data.text || 'No response from AI.';
     outputEl.textContent = text;
     return text;
-  } catch(e) {
-    const text = simulateClaude(system, userMsg);
-    outputEl.textContent = text;
-    return text;
+  } catch (e) {
+    console.error('AI request failed:', e);
+    if (USE_LOCAL_FALLBACK) {
+      const text = simulateGemini(system, userMsg);
+      outputEl.textContent = text;
+      return text;
+    }
+    outputEl.textContent = 'AI backend error: ' + e.message;
+    return e.message;
   }
 }
 
